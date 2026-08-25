@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Onam</title>
+<style>
+  :root{
+    --ember-deep:#2a0705;
+    --ember-mid:#7a1408;
+    --ember-hot:#c8410f;
+    --ember-glow:#ff8a3d;
+    --cream:#f3e6c8;
+    --parchment:#e9d8ab;
+    --gold-dark:#8a5a1a;
+    --gold:#d4a437;
+    --gold-light:#f3d488;
+    --skin-base:#c98850;
+    --skin-shadow:#a1653a;
+    --skin-light:#e4ab73;
+    --white-cloth:#f6efe0;
+    --white-cloth-shadow:#d8c9a6;
+    --ink:#150402;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    width:100%;
+    height:100%;
+    background:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    font-family:Georgia,'Times New Roman',serif;
+  }
+
+  @font-face{
+    font-family:'Happy Onam';
+    src:url('HappyOnam-Regular.woff2') format('woff2');
+    font-style:normal;
+    font-weight:400;
+  }
+
+  .stage{
+    position:relative;
+    width:min(96vw,700px);
+    aspect-ratio:3/4;
+    max-height:98vh;
+    overflow:hidden;
+    border-radius:6px;
+    box-shadow:0 0 0 10px #0a0301, 0 0 60px 20px rgba(0,0,0,.8);
+    background:
+      radial-gradient(120% 80% at 50% 8%, #ff9d4d 0%, #d9560f 18%, var(--ember-hot) 34%, var(--ember-mid) 58%, var(--ember-deep) 82%, #0d0201 100%);
+  }
+
+  /* ---------- ambient texture ---------- */
+  .grain{
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 1px, transparent 1px 3px);
+    mix-blend-mode:multiply;
+    pointer-events:none;
+    z-index:50;
+  }
+  .vignette{
+    position:absolute; inset:0;
+    background:radial-gradient(120% 90% at 50% 40%, transparent 45%, rgba(0,0,0,.55) 85%, rgba(0,0,0,.85) 100%);
+    pointer-events:none;
+    z-index:49;
+  }
+  .diamond-pattern{
+    position:absolute; top:0; left:0; right:0; height:34%;
+    background-image:repeating-linear-gradient(45deg, rgba(255,150,60,.07) 0 2px, transparent 2px 26px),
+                      repeating-linear-gradient(-45deg, rgba(255,150,60,.07) 0 2px, transparent 2px 26px);
+    opacity:.6;
+    z-index:1;
+  }
+
+  /* ---------- palm trees ---------- */
+  .palms{ position:absolute; inset:0; z-index:5; }
+  .palm{
+    position:absolute; bottom:26%;
+    width:10px; height:34%;
+    transform-origin:bottom center;
+  }
+  .palm .trunk{
+    position:absolute; bottom:0; left:50%;
+    width:7px; height:100%;
+    background:linear-gradient(180deg,#1a0d08,#000);
+    border-radius:3px;
+    transform:translateX(-50%) rotate(var(--lean,4deg));
+    transform-origin:bottom center;
+  }
+  .palm .fronds{
+    position:absolute; top:-4px; left:50%;
+    width:0; height:0;
+    transform:translateX(-50%) rotate(var(--lean,4deg));
+    animation:sway 5s ease-in-out infinite;
+    transform-origin:bottom center;
+  }
+  .palm .frond{
+    position:absolute; top:0; left:0;
+    width:56px; height:12px;
+    background:#000;
+    border-radius:0 60% 60% 0;
+    transform-origin:0% 50%;
+  }
+  .palm .frond:nth-child(1){ transform:rotate(-60deg); }
+  .palm .frond:nth-child(2){ transform:rotate(-28deg); width:64px; }
+  .palm .frond:nth-child(3){ transform:rotate(-4deg); width:66px; }
+  .palm .frond:nth-child(4){ transform:rotate(22deg) scaleX(-1); width:60px; left:-56px;}
+  .palm .frond:nth-child(5){ transform:rotate(50deg) scaleX(-1); width:52px; left:-46px;}
+  .palm .frond:nth-child(6){ transform:rotate(80deg) scaleX(-1); width:44px; left:-38px;}
+
+  .palm1{ left:2%;  height:30%; bottom:24%; --lean:-6deg; }
+  .palm2{ left:12%; height:22%; bottom:23%; --lean:5deg; opacity:.85;}
+  .palm3{ right:3%; height:32%; bottom:25%; --lean:7deg; }
+  .palm4{ right:14%; height:20%; bottom:22%; --lean:-4deg; opacity:.8;}
+  .palm5{ left:20%; height:14%; bottom:22%; --lean:2deg; opacity:.55;}
+  .palm6{ right:23%; height:15%; bottom:22%; --lean:-3deg; opacity:.55;}
+
+  @keyframes sway{
+    0%,100%{ rotate:0deg; }
+    50%{ rotate:4deg; }
+  }
+
+  /* distant temple silhouette */
+  .temple{
+    position:absolute; left:50%; bottom:24%; transform:translateX(-50%);
+    width:120px; height:70px; z-index:4; opacity:.5;
+  }
+  .temple::before{
+    content:"";
+    position:absolute; bottom:0; left:10px; right:10px; height:40px;
+    background:#1a0805;
+    clip-path:polygon(0 100%,0 30%,50% 0,100% 30%,100% 100%);
+  }
+  .temple::after{
+    content:"";
+    position:absolute; bottom:36px; left:38px; right:38px; height:34px;
+    background:#1a0805;
+    clip-path:polygon(0 100%,0 40%,50% 0,100% 40%,100% 100%);
+  }
+
+  /* ---------- pookalam / floral emblem top ---------- */
+  .emblem{
+    position:absolute; top:6.5%; left:50%; transform:translateX(-50%);
+    width:34px; height:34px; z-index:20;
+  }
+  .emblem .petal{
+    position:absolute; top:50%; left:50%;
+    width:16px; height:8px;
+    background:radial-gradient(circle at 30% 50%, var(--gold-light), var(--gold) 60%, var(--gold-dark) 100%);
+    border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+    transform-origin:0% 50%;
+  }
+  .emblem .petal:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
+  .emblem .petal:nth-child(2){ transform:translate(-50%,-50%) rotate(45deg); }
+  .emblem .petal:nth-child(3){ transform:translate(-50%,-50%) rotate(90deg); }
+  .emblem .petal:nth-child(4){ transform:translate(-50%,-50%) rotate(135deg); }
+  .emblem .petal:nth-child(5){ transform:translate(-50%,-50%) rotate(180deg); }
+  .emblem .petal:nth-child(6){ transform:translate(-50%,-50%) rotate(225deg); }
+  .emblem .petal:nth-child(7){ transform:translate(-50%,-50%) rotate(270deg); }
+  .emblem .petal:nth-child(8){ transform:translate(-50%,-50%) rotate(315deg); }
+  .emblem .center{
+    position:absolute; top:50%; left:50%; width:10px; height:10px;
+    background:radial-gradient(circle at 35% 35%, #fff2c9, var(--gold-dark));
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    box-shadow:0 0 6px 1px rgba(255,200,90,.8);
+  }
+
+  .kicker{
+    position:absolute; top:2.2%; left:50%; transform:translateX(-50%);
+    font-size:9px; letter-spacing:6px; color:var(--parchment);
+    opacity:.55; text-transform:uppercase; z-index:20; white-space:nowrap;
+  }
+
+  /* ---------- ONAM headline ---------- */
+  .headline{
+    position:absolute; top:9.5%; left:0; right:0;
+    text-align:center; z-index:20;
+    font-family:'Arial Black', Arial, sans-serif;
+    font-weight:900;
+    font-size:min(21vw,15vh);
+    line-height:.85;
+    letter-spacing:2px;
+    color:var(--cream);
+    -webkit-text-stroke:1.5px #3a1206;
+    background:linear-gradient(180deg,#fffbea 0%, #f3e2ae 35%, #e0bf78 60%, #b9925a 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    filter:
+      drop-shadow(0 2px 0 #6e3410)
+      drop-shadow(0 6px 10px rgba(0,0,0,.65))
+      drop-shadow(0 0 26px rgba(255,150,50,.35));
+    animation:glow 4s ease-in-out infinite;
+  }
+  .headline::after{
+    /* cracked / distressed texture overlay */
+    content:"ONAM";
+    position:absolute; inset:0;
+    color:transparent;
+    background:
+      repeating-linear-gradient(115deg, rgba(0,0,0,.16) 0 2px, transparent 2px 14px),
+      repeating-linear-gradient(25deg, rgba(0,0,0,.12) 0 1px, transparent 1px 20px);
+    -webkit-background-clip:text;
+    background-clip:text;
+    mix-blend-mode:multiply;
+  }
+  @keyframes glow{
+    0%,100%{ filter:drop-shadow(0 2px 0 #6e3410) drop-shadow(0 6px 10px rgba(0,0,0,.65)) drop-shadow(0 0 26px rgba(255,150,50,.35)); }
+    50%{ filter:drop-shadow(0 2px 0 #6e3410) drop-shadow(0 6px 10px rgba(0,0,0,.65)) drop-shadow(0 0 40px rgba(255,180,80,.6)); }
+  }
+
+  .greeting-line{
+    position:absolute; top:calc(9.5% + 15vh); left:8%;
+    max-width:34%;
+    text-align:center; z-index:20;
+    color:var(--parchment);
+    font-size:11px; line-height:1.6;
+    opacity:.85;
+    font-family:Georgia,serif;
+  }
+  .greeting-line b{ display:block; font-size:12px; color:var(--gold-light); }
+
+  /* ================= MAVELI FIGURE ================= */
+  .maveli{
+    position:absolute;
+    left:50%; bottom:15%;
+    width:280px; height:340px;
+    transform:translateX(-42%);
+    z-index:30;
+  }
+
+  /* stone pedestal */
+  .pedestal{
+    position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+    width:230px; height:26px;
+    background:linear-gradient(180deg,#4a2010,#1a0704);
+    border-radius:50%/60%;
+    box-shadow:0 10px 25px rgba(0,0,0,.7);
+  }
+  .pedestal::before{
+    content:""; position:absolute; top:-10px; left:14px; right:14px; height:16px;
+    background:linear-gradient(180deg,#6e2f14,#3a150a);
+    border-radius:50%;
+  }
+
+  /* big chair back / halo glow behind him */
+  .halo{
+    position:absolute; bottom:40px; left:50%; transform:translateX(-50%);
+    width:250px; height:250px;
+    background:radial-gradient(circle, rgba(255,196,110,.55), rgba(255,140,40,0) 70%);
+    z-index:-1;
+  }
+
+  /* seat / chair silhouette */
+  .chair{
+    position:absolute; bottom:22px; left:50%; transform:translateX(-50%);
+    width:150px; height:120px;
+    background:linear-gradient(180deg,#3a1a0c,#1c0904);
+    border-radius:14px 14px 4px 4px;
+    z-index:1;
+    box-shadow:inset 0 0 0 4px rgba(120,70,25,.4);
+  }
+
+  /* legs, dhoti main drape */
+  .legs{
+    position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+    width:190px; height:118px;
+    z-index:5;
+  }
+  .legs .drape{
+    position:absolute; bottom:0; left:0; width:100%; height:100%;
+    background:linear-gradient(180deg, var(--white-cloth) 0%, var(--white-cloth) 60%, var(--white-cloth-shadow) 100%);
+    clip-path:polygon(8% 100%, 2% 40%, 20% 8%, 50% 0%, 80% 8%, 98% 40%, 92% 100%, 74% 78%, 50% 92%, 26% 78%);
+    box-shadow:inset 0 -10px 18px rgba(150,120,70,.35), inset 0 8px 10px rgba(255,255,255,.4);
+  }
+  .legs .drape::before{
+    /* gold hem stripes */
+    content:"";
+    position:absolute; left:4%; right:4%; bottom:6%; height:14%;
+    background:repeating-linear-gradient(90deg, var(--gold) 0 10px, var(--gold-dark) 10px 14px);
+    clip-path:polygon(4% 100%,0% 0%,100% 0%,96% 100%);
+    opacity:.95;
+  }
+  .legs .pleats{
+    position:absolute; bottom:0; left:22%; right:22%; top:10%;
+    background:repeating-linear-gradient(90deg, rgba(180,150,100,.25) 0 3px, transparent 3px 14px);
+    clip-path:polygon(8% 100%, 2% 40%, 20% 8%, 50% 0%, 80% 8%, 98% 40%, 92% 100%, 74% 78%, 50% 92%, 26% 78%);
+  }
+  .feet{
+    position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
+    width:170px; height:26px; z-index:6;
+  }
+  .shoe{
+    position:absolute; bottom:0; width:60px; height:20px;
+    background:linear-gradient(180deg,var(--gold-light),var(--gold-dark));
+    border-radius:40% 60% 50% 50%/70% 70% 30% 30%;
+  }
+  .shoe.left{ left:6px; }
+  .shoe.right{ right:6px; }
+  .shoe::after{
+    content:""; position:absolute; right:-8px; top:-10px; width:14px; height:16px;
+    background:inherit; border-radius:50% 50% 50% 0%;
+    transform:rotate(35deg);
+  }
+  .shoe.right::after{ right:auto; left:-8px; transform:rotate(-35deg) scaleX(-1); }
+
+  /* golden waist belt */
+  .belt{
+    position:absolute; bottom:112px; left:50%; transform:translateX(-50%);
+    width:150px; height:22px;
+    background:linear-gradient(180deg,var(--gold-light),var(--gold) 50%,var(--gold-dark));
+    border-radius:50%;
+    z-index:8;
+    box-shadow:0 3px 6px rgba(0,0,0,.4);
+  }
+  .belt::before{
+    content:""; position:absolute; left:50%; top:50%; width:22px; height:22px;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle at 35% 35%, #fff3c8, var(--gold-dark));
+    border-radius:50%;
+    box-shadow:0 0 6px rgba(255,210,120,.8);
+  }
+
+  /* belly / torso */
+  .torso{
+    position:absolute; bottom:116px; left:50%; transform:translateX(-50%);
+    width:172px; height:130px;
+    background:radial-gradient(120% 100% at 35% 25%, var(--skin-light) 0%, var(--skin-base) 55%, var(--skin-shadow) 100%);
+    border-radius:50% 50% 48% 48%/58% 58% 42% 42%;
+    z-index:7;
+    box-shadow:inset -18px -10px 30px rgba(70,30,10,.4), inset 10px 10px 20px rgba(255,220,180,.25);
+  }
+  .torso::before{
+    /* navel shading */
+    content:"";
+    position:absolute; left:50%; top:60%; width:10px; height:14px;
+    background:rgba(80,35,15,.5);
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    filter:blur(1px);
+  }
+  /* shawl draped over left shoulder */
+  .shawl{
+    position:absolute; bottom:150px; right:22px;
+    width:70px; height:150px;
+    background:linear-gradient(160deg,var(--white-cloth) 0%, var(--white-cloth-shadow) 100%);
+    clip-path:polygon(0 0, 60% 0, 100% 90%, 55% 100%, 20% 70%);
+    z-index:9;
+    box-shadow:inset 0 0 14px rgba(150,120,70,.3);
+  }
+  .shawl::after{
+    content:"";
+    position:absolute; right:6px; top:0; bottom:8%; width:10px;
+    background:repeating-linear-gradient(180deg, var(--gold) 0 8px, var(--gold-dark) 8px 11px);
+    clip-path:polygon(0 0,100% 8%,90% 100%,0 92%);
+  }
+
+  /* necklaces */
+  .neck{
+    position:absolute; bottom:238px; left:50%; transform:translateX(-50%);
+    width:60px; height:26px;
+    background:var(--skin-base);
+    border-radius:0 0 30px 30px/0 0 20px 20px;
+    z-index:9;
+  }
+  .necklace{
+    position:absolute; left:50%; transform:translateX(-50%);
+    border-radius:50%;
+    border-style:solid;
+    z-index:10;
+  }
+  .necklace.n1{ bottom:234px; width:88px; height:36px; border:5px solid var(--gold); border-top:none; clip-path:inset(0 0 40% 0);}
+  .necklace.n2{ bottom:222px; width:104px; height:46px; border:4px solid var(--gold-dark); border-top:none; clip-path:inset(0 0 40% 0);}
+  .necklace.n2::after{
+    content:""; position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
+    width:16px; height:20px; background:radial-gradient(circle at 35% 30%, #fff3c8, var(--gold-dark));
+    border-radius:40% 40% 50% 50%;
+    box-shadow:0 0 6px rgba(255,210,120,.7);
+  }
+
+  /* head */
+  .head{
+    position:absolute; bottom:250px; left:50%; transform:translateX(-50%);
+    width:104px; height:100px;
+    background:radial-gradient(120% 120% at 35% 30%, var(--skin-light) 0%, var(--skin-base) 55%, var(--skin-shadow) 100%);
+    border-radius:50% 50% 46% 46%/55% 55% 45% 45%;
+    z-index:11;
+    box-shadow:inset -14px -6px 20px rgba(70,30,10,.35), inset 8px 8px 16px rgba(255,220,180,.3);
+  }
+
+  /* ears + earrings */
+  .ear{
+    position:absolute; top:44%; width:16px; height:22px;
+    background:var(--skin-base);
+    border-radius:50%;
+  }
+  .ear.l{ left:-8px; }
+  .ear.r{ right:-8px; }
+  .earring{
+    position:absolute; top:70%; width:10px; height:14px;
+    background:radial-gradient(circle at 35% 30%, #fff3c8, var(--gold-dark));
+    border-radius:50%;
+    box-shadow:0 0 5px rgba(255,210,120,.8);
+  }
+  .earring.l{ left:-2px; }
+  .earring.r{ right:-2px; }
+
+  /* face features */
+  .face{ position:absolute; inset:0; }
+  .brow{
+    position:absolute; top:36%; width:20px; height:5px;
+    background:#1c1006; border-radius:6px;
+  }
+  .brow.l{ left:16%; transform:rotate(-8deg); }
+  .brow.r{ right:16%; transform:rotate(8deg); }
+
+  .eye{
+    position:absolute; top:42%; width:16px; height:8px;
+    background:linear-gradient(180deg,#3a2210,#1c1006);
+    border-radius:0 0 50% 50%/0 0 90% 90%;
+  }
+  .eye.l{ left:18%; }
+  .eye.r{ right:18%; }
+  .eye::after{
+    content:""; position:absolute; top:-2px; left:2px; right:2px; height:3px;
+    background:#1c1006; border-radius:50%;
+  }
+
+  .cheek{
+    position:absolute; top:52%; width:20px; height:12px;
+    background:radial-gradient(circle, rgba(220,90,50,.35), transparent 70%);
+    border-radius:50%;
+  }
+  .cheek.l{ left:8%; }
+  .cheek.r{ right:8%; }
+
+  .nose{
+    position:absolute; top:44%; left:50%; transform:translateX(-50%);
+    width:16px; height:20px;
+    background:radial-gradient(circle at 40% 30%, var(--skin-light), var(--skin-shadow));
+    border-radius:40% 40% 60% 60%;
+  }
+
+  .smile{
+    position:absolute; top:60%; left:50%; transform:translateX(-50%);
+    width:46px; height:24px;
+    border-bottom:5px solid #3a1206;
+    border-radius:0 0 50% 50%/0 0 100% 100%;
+  }
+  .teeth{
+    position:absolute; top:64%; left:50%; transform:translateX(-50%);
+    width:30px; height:8px;
+    background:#fff8e8;
+    border-radius:2px 2px 6px 6px;
+  }
+
+  .mustache{
+    position:absolute; top:56%; left:50%; transform:translateX(-50%);
+    width:76px; height:24px;
+    z-index:12;
+  }
+  .mustache .side{
+    position:absolute; top:0; width:40px; height:20px;
+    background:linear-gradient(180deg,#241408,#000);
+    border-radius:50% 50% 50% 50%/60% 60% 100% 100%;
+  }
+  .mustache .side.l{ left:0; transform-origin:100% 20%; transform:rotate(18deg); border-radius:80% 20% 60% 60%/90% 40% 90% 40%; }
+  .mustache .side.r{ right:0; transform-origin:0% 20%; transform:rotate(-18deg) scaleX(-1); border-radius:80% 20% 60% 60%/90% 40% 90% 40%; }
+
+  .beard-tuft{
+    position:absolute; top:74%; left:50%; transform:translateX(-50%);
+    width:22px; height:16px;
+    background:linear-gradient(180deg,#241408,#000);
+    border-radius:0 0 50% 50%/0 0 90% 90%;
+  }
+
+  /* crown */
+  .crown{
+    position:absolute; top:-46px; left:50%; transform:translateX(-50%);
+    width:96px; height:52px;
+    z-index:13;
+  }
+  .crown .base{
+    position:absolute; bottom:0; left:0; right:0; height:26px;
+    background:linear-gradient(180deg,var(--gold-light),var(--gold) 55%,var(--gold-dark));
+    border-radius:6px;
+    box-shadow:0 3px 6px rgba(0,0,0,.4), inset 0 2px 3px rgba(255,255,255,.5);
+  }
+  .crown .base::after{
+    content:""; position:absolute; left:6%; right:6%; top:30%; bottom:30%;
+    background:repeating-linear-gradient(90deg, rgba(150,90,20,.5) 0 2px, transparent 2px 10px);
+  }
+  .crown .peak{
+    position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+    width:34px; height:38px;
+    background:linear-gradient(180deg,var(--gold-light),var(--gold) 60%,var(--gold-dark));
+    clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
+    box-shadow:0 2px 5px rgba(0,0,0,.35);
+  }
+  .crown .side{
+    position:absolute; bottom:18px; width:22px; height:26px;
+    background:linear-gradient(180deg,var(--gold-light),var(--gold) 60%,var(--gold-dark));
+    clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
+  }
+  .crown .side.l{ left:4px; }
+  .crown .side.r{ right:4px; }
+  .crown .jewel{
+    position:absolute; bottom:26px; left:50%; transform:translateX(-50%);
+    width:14px; height:14px;
+    background:radial-gradient(circle at 35% 30%, #ffdde0, #c8283a 70%);
+    border-radius:50%;
+    box-shadow:0 0 8px rgba(255,60,80,.7);
+  }
+  .crown .dot{
+    position:absolute; bottom:8px; width:6px; height:6px;
+    background:radial-gradient(circle at 35% 30%,#fff3c8,var(--gold-dark));
+    border-radius:50%;
+  }
+  .crown .dot.d1{ left:12px; }
+  .crown .dot.d2{ left:30px; }
+  .crown .dot.d3{ right:30px; }
+  .crown .dot.d4{ right:12px; }
+
+  /* ---- right arm holding umbrella ---- */
+  .arm-right{
+    position:absolute; bottom:210px; right:2px;
+    width:36px; height:110px;
+    background:linear-gradient(100deg, var(--skin-light), var(--skin-base) 60%, var(--skin-shadow));
+    border-radius:40% 40% 45% 45%/50% 50% 50% 50%;
+    transform:rotate(-8deg);
+    transform-origin:top center;
+    z-index:6;
+  }
+  .fist{
+    position:absolute; bottom:198px; right:-2px;
+    width:26px; height:26px;
+    background:radial-gradient(circle at 35% 30%, var(--skin-light), var(--skin-shadow));
+    border-radius:50%;
+    z-index:15;
+  }
+  .bangle{
+    position:absolute; bottom:206px; right:-4px;
+    width:30px; height:8px;
+    border:3px solid var(--gold);
+    border-radius:50%;
+    z-index:16;
+  }
+
+  /* ---- left arm raised, waving ---- */
+  .arm-left{
+    position:absolute; bottom:222px; left:-6px;
+    width:30px; height:80px;
+    background:linear-gradient(260deg, var(--skin-light), var(--skin-base) 60%, var(--skin-shadow));
+    border-radius:50% 50% 40% 40%/60% 60% 40% 40%;
+    transform:rotate(48deg);
+    transform-origin:bottom center;
+    z-index:14;
+    animation:wave 2.4s ease-in-out infinite;
+  }
+  @keyframes wave{
+    0%,100%{ transform:rotate(44deg); }
+    50%{ transform:rotate(58deg); }
+  }
+  .hand-wave{
+    position:absolute; top:-16px; left:50%; transform:translateX(-50%);
+    width:26px; height:30px;
+    background:radial-gradient(circle at 40% 30%, var(--skin-light), var(--skin-shadow));
+    border-radius:50% 50% 40% 40%;
+  }
+  .hand-wave::before,.hand-wave::after{
+    content:""; position:absolute; top:-8px; width:6px; height:14px;
+    background:inherit; border-radius:40%;
+  }
+  .hand-wave::before{ left:2px; transform:rotate(-10deg); }
+  .hand-wave::after{ right:2px; transform:rotate(10deg); }
+  .arm-left-bangle{
+    position:absolute; bottom:60px; left:-8px;
+    width:26px; height:8px;
+    border:3px solid var(--gold);
+    border-radius:50%;
+    z-index:15;
+  }
+
+  /* ---------- umbrella (large, hand-held palm-leaf style) ---------- */
+  .umbrella{
+    position:absolute; bottom:250px; right:-58px;
+    width:230px; height:160px;
+    z-index:4;
+    transform-origin:bottom center;
+    animation:umbrella-sway 6s ease-in-out infinite;
+  }
+  @keyframes umbrella-sway{
+    0%,100%{ transform:rotate(-2deg); }
+    50%{ transform:rotate(2deg); }
+  }
+  .umbrella .handle{
+    position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+    width:8px; height:200px;
+    background:linear-gradient(90deg,#6b4321,#3a2210 60%,#22140a);
+    border-radius:4px;
+    z-index:1;
+  }
+  .umbrella .canopy{
+    position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:230px; height:120px;
+    border-radius:50% 50% 0 0/100% 100% 0 0;
+    background:
+      repeating-conic-gradient(from -90deg at 50% 100%,
+        #caa15a 0deg 15deg,
+        #b8874a 15deg 30deg);
+    box-shadow:0 6px 14px rgba(0,0,0,.5), inset 0 -6px 10px rgba(0,0,0,.25);
+    overflow:hidden;
+  }
+  .umbrella .canopy::before{
+    /* rib lines */
+    content:"";
+    position:absolute; inset:0;
+    background:repeating-conic-gradient(from -90deg at 50% 100%,
+      transparent 0 14.6deg, rgba(60,30,10,.55) 14.6deg 15deg);
+  }
+  .umbrella .canopy::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:0; height:14px;
+    background:repeating-linear-gradient(90deg, var(--gold) 0 10px, var(--gold-dark) 10px 14px);
+    clip-path:polygon(0 100%,2% 0,98% 0,100% 100%);
+  }
+  .umbrella .tip{
+    position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+    width:12px; height:16px;
+    background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold-dark));
+    border-radius:50% 50% 20% 20%;
+  }
+
+  /* petals falling */
+  .petals{ position:absolute; inset:0; z-index:40; pointer-events:none; }
+  .petal-fall{
+    position:absolute; top:-5%;
+    width:9px; height:9px;
+    background:radial-gradient(circle at 30% 30%, var(--gold-light), var(--gold-dark));
+    border-radius:50% 50% 50% 0;
+    opacity:.85;
+    animation:fall linear infinite;
+  }
+  @keyframes fall{
+    0%{ transform:translateY(0) rotate(0deg); opacity:0; }
+    10%{ opacity:.9; }
+    100%{ transform:translateY(115vh) rotate(340deg); opacity:0; }
+  }
+  .p1{ left:8%;  animation-duration:9s;  animation-delay:0s; }
+  .p2{ left:22%; animation-duration:11s; animation-delay:2s; }
+  .p3{ left:38%; animation-duration:8s;  animation-delay:1s; }
+  .p4{ left:58%; animation-duration:10s; animation-delay:3s; }
+  .p5{ left:74%; animation-duration:9.5s;animation-delay:.5s;}
+  .p6{ left:88%; animation-duration:12s; animation-delay:2.5s;}
+  .p7{ left:48%; animation-duration:7.5s;animation-delay:4s;}
+  .p8{ left:16%; animation-duration:10.5s;animation-delay:5s;}
+
+  /* ---------- bottom greeting block ---------- */
+  .bottom-block{
+    position:absolute; bottom:4%; left:0; right:0;
+    text-align:center; z-index:45;
+  }
+  .happy{
+    font-family:Georgia,'Times New Roman',serif;
+    font-style:italic;
+    font-weight:700;
+    letter-spacing:10px;
+    font-size:15px;
+    color:var(--cream);
+    opacity:.9;
+  }
+  .onaml{
+    font-family:'Brush Script MT','Segoe Script',cursive;
+    font-size:min(15vw,58px);
+    background:linear-gradient(180deg,#fff2c4,var(--gold) 55%,#a06a17);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,.6));
+    margin-top:-4px;
+  }
+  .tagline{
+    margin-top:6px;
+    font-size:10px; letter-spacing:4px;
+    color:var(--parchment); opacity:.75;
+    text-transform:uppercase;
+  }
+  .tagline .sep{ color:var(--gold); margin:0 6px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001s !important; animation-iteration-count:1 !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="diamond-pattern"></div>
+
+    <div class="palms">
+      <div class="palm palm1"><div class="trunk"></div><div class="fronds">
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+      </div></div>
+      <div class="palm palm2"><div class="trunk"></div><div class="fronds">
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+      </div></div>
+      <div class="palm palm3"><div class="trunk"></div><div class="fronds">
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+      </div></div>
+      <div class="palm palm4"><div class="trunk"></div><div class="fronds">
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+      </div></div>
+      <div class="palm palm5"><div class="trunk"></div><div class="fronds">
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+      </div></div>
+      <div class="palm palm6"><div class="trunk"></div><div class="fronds">
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
+      </div></div>
+    </div>
+
+    <div class="temple"></div>
+
+    <div class="kicker">Celebrating our roots</div>
+    <div class="emblem">
+      <div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div>
+      <div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div>
+      <div class="center"></div>
+    </div>
+
+    <div class="headline">ONAM</div>
+    <div class="greeting-line"><b>ഓണാശംസകൾ</b>നിറഞ്ഞ ഓണം<br>നല്ല ഓണം</div>
+
+    <div class="maveli">
+      <div class="halo"></div>
+      <div class="pedestal"></div>
+      <div class="chair"></div>
+
+      <div class="umbrella">
+        <div class="handle"></div>
+        <div class="canopy"></div>
+        <div class="tip"></div>
+      </div>
+
+      <div class="feet">
+        <div class="shoe left"></div>
+        <div class="shoe right"></div>
+      </div>
+      <div class="legs">
+        <div class="drape"></div>
+        <div class="pleats"></div>
+      </div>
+
+      <div class="belt"></div>
+
+      <div class="arm-right"></div>
+      <div class="bangle"></div>
+      <div class="fist"></div>
+
+      <div class="torso"></div>
+      <div class="shawl"></div>
+
+      <div class="neck"></div>
+      <div class="necklace n1"></div>
+      <div class="necklace n2"></div>
+
+      <div class="arm-left">
+        <div class="hand-wave"></div>
+      </div>
+      <div class="arm-left-bangle"></div>
+
+      <div class="head">
+        <div class="ear l"></div><div class="ear r"></div>
+        <div class="earring l"></div><div class="earring r"></div>
+        <div class="face">
+          <div class="brow l"></div><div class="brow r"></div>
+          <div class="eye l"></div><div class="eye r"></div>
+          <div class="cheek l"></div><div class="cheek r"></div>
+          <div class="nose"></div>
+          <div class="mustache">
+            <div class="side l"></div><div class="side r"></div>
+          </div>
+          <div class="smile"></div>
+          <div class="teeth"></div>
+          <div class="beard-tuft"></div>
+        </div>
+        <div class="crown">
+          <div class="side l"></div>
+          <div class="side r"></div>
+          <div class="peak"></div>
+          <div class="base"></div>
+          <div class="jewel"></div>
+          <div class="dot d1"></div><div class="dot d2"></div>
+          <div class="dot d3"></div><div class="dot d4"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="petals">
+      <div class="petal-fall p1"></div>
+      <div class="petal-fall p2"></div>
+      <div class="petal-fall p3"></div>
+      <div class="petal-fall p4"></div>
+      <div class="petal-fall p5"></div>
+      <div class="petal-fall p6"></div>
+      <div class="petal-fall p7"></div>
+      <div class="petal-fall p8"></div>
+    </div>
+
+    <div class="bottom-block">
+      <div class="happy">HAPPY</div>
+      <div class="onaml">Onam</div>
+      <div class="tagline">TRADITION <span class="sep">&#10070;</span> JOY <span class="sep">&#10070;</span> TOGETHERNESS</div>
+    </div>
+
+    <div class="vignette"></div>
+    <div class="grain"></div>
+  </div>
+</body>
+</html>
