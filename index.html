@@ -1,829 +1,2348 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Happy Onam</title>
-<style>
-  :root{
-    --ember-deep:#2a0705;
-    --ember-mid:#7a1408;
-    --ember-hot:#c8410f;
-    --ember-glow:#ff8a3d;
-    --cream:#f3e6c8;
-    --parchment:#e9d8ab;
-    --gold-dark:#8a5a1a;
-    --gold:#d4a437;
-    --gold-light:#f3d488;
-    --skin-base:#c98850;
-    --skin-shadow:#a1653a;
-    --skin-light:#e4ab73;
-    --white-cloth:#f6efe0;
-    --white-cloth-shadow:#d8c9a6;
-    --ink:#150402;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Onam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  *{ box-sizing:border-box; margin:0; padding:0; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #2c2416;
+            font-family: Georgia, 'Times New Roman', serif;
+            overflow-x: auto;
+        }
 
-  html,body{
-    width:100%;
-    height:100%;
-    background:var(--ink);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    font-family:Georgia,'Times New Roman',serif;
-  }
+        .scene {
+            position: relative;
+            width: 720px;
+            height: 1020px;
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(255, 250, 230, 0.9) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(240, 230, 200, 0.6) 0%, transparent 40%),
+                linear-gradient(165deg, #f8f0d8 0%, #f0e4c4 25%, #e8d9b0 50%, #f2e6c8 75%, #faf3e0 100%);
+            border: 14px solid #c9a227;
+            box-shadow:
+                inset 0 0 0 3px #8b6914,
+                inset 0 0 0 6px #e8d48b,
+                0 20px 60px rgba(0, 0, 0, 0.55);
+            overflow: hidden;
+        }
 
-  @font-face{
-    font-family:'Happy Onam';
-    src:url('HappyOnam-Regular.woff2') format('woff2');
-    font-style:normal;
-    font-weight:400;
-  }
+        /* ornate corner frames */
+        .scene::before,
+        .scene::after {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border: 3px solid #b8860b;
+            z-index: 20;
+            pointer-events: none;
+        }
 
-  .stage{
-    position:relative;
-    width:min(96vw,700px);
-    aspect-ratio:3/4;
-    max-height:98vh;
-    overflow:hidden;
-    border-radius:6px;
-    box-shadow:0 0 0 10px #0a0301, 0 0 60px 20px rgba(0,0,0,.8);
-    background:
-      radial-gradient(120% 80% at 50% 8%, #ff9d4d 0%, #d9560f 18%, var(--ember-hot) 34%, var(--ember-mid) 58%, var(--ember-deep) 82%, #0d0201 100%);
-  }
+        .scene::before {
+            top: 18px;
+            left: 18px;
+            border-right: none;
+            border-bottom: none;
+            border-top-left-radius: 8px;
+        }
 
-  /* ---------- ambient texture ---------- */
-  .grain{
-    position:absolute; inset:0;
-    background-image:
-      repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px),
-      repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 1px, transparent 1px 3px);
-    mix-blend-mode:multiply;
-    pointer-events:none;
-    z-index:50;
-  }
-  .vignette{
-    position:absolute; inset:0;
-    background:radial-gradient(120% 90% at 50% 40%, transparent 45%, rgba(0,0,0,.55) 85%, rgba(0,0,0,.85) 100%);
-    pointer-events:none;
-    z-index:49;
-  }
-  .diamond-pattern{
-    position:absolute; top:0; left:0; right:0; height:34%;
-    background-image:repeating-linear-gradient(45deg, rgba(255,150,60,.07) 0 2px, transparent 2px 26px),
-                      repeating-linear-gradient(-45deg, rgba(255,150,60,.07) 0 2px, transparent 2px 26px);
-    opacity:.6;
-    z-index:1;
-  }
+        .scene::after {
+            top: 18px;
+            right: 18px;
+            border-left: none;
+            border-bottom: none;
+            border-top-right-radius: 8px;
+        }
 
-  /* ---------- palm trees ---------- */
-  .palms{ position:absolute; inset:0; z-index:5; }
-  .palm{
-    position:absolute; bottom:26%;
-    width:10px; height:34%;
-    transform-origin:bottom center;
-  }
-  .palm .trunk{
-    position:absolute; bottom:0; left:50%;
-    width:7px; height:100%;
-    background:linear-gradient(180deg,#1a0d08,#000);
-    border-radius:3px;
-    transform:translateX(-50%) rotate(var(--lean,4deg));
-    transform-origin:bottom center;
-  }
-  .palm .fronds{
-    position:absolute; top:-4px; left:50%;
-    width:0; height:0;
-    transform:translateX(-50%) rotate(var(--lean,4deg));
-    animation:sway 5s ease-in-out infinite;
-    transform-origin:bottom center;
-  }
-  .palm .frond{
-    position:absolute; top:0; left:0;
-    width:56px; height:12px;
-    background:#000;
-    border-radius:0 60% 60% 0;
-    transform-origin:0% 50%;
-  }
-  .palm .frond:nth-child(1){ transform:rotate(-60deg); }
-  .palm .frond:nth-child(2){ transform:rotate(-28deg); width:64px; }
-  .palm .frond:nth-child(3){ transform:rotate(-4deg); width:66px; }
-  .palm .frond:nth-child(4){ transform:rotate(22deg) scaleX(-1); width:60px; left:-56px;}
-  .palm .frond:nth-child(5){ transform:rotate(50deg) scaleX(-1); width:52px; left:-46px;}
-  .palm .frond:nth-child(6){ transform:rotate(80deg) scaleX(-1); width:44px; left:-38px;}
+        .corner-bl,
+        .corner-br {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border: 3px solid #b8860b;
+            z-index: 20;
+            pointer-events: none;
+        }
 
-  .palm1{ left:2%;  height:30%; bottom:24%; --lean:-6deg; }
-  .palm2{ left:12%; height:22%; bottom:23%; --lean:5deg; opacity:.85;}
-  .palm3{ right:3%; height:32%; bottom:25%; --lean:7deg; }
-  .palm4{ right:14%; height:20%; bottom:22%; --lean:-4deg; opacity:.8;}
-  .palm5{ left:20%; height:14%; bottom:22%; --lean:2deg; opacity:.55;}
-  .palm6{ right:23%; height:15%; bottom:22%; --lean:-3deg; opacity:.55;}
+        .corner-bl {
+            bottom: 18px;
+            left: 18px;
+            border-right: none;
+            border-top: none;
+            border-bottom-left-radius: 8px;
+        }
 
-  @keyframes sway{
-    0%,100%{ rotate:0deg; }
-    50%{ rotate:4deg; }
-  }
+        .corner-br {
+            bottom: 18px;
+            right: 18px;
+            border-left: none;
+            border-top: none;
+            border-bottom-right-radius: 8px;
+        }
 
-  /* distant temple silhouette */
-  .temple{
-    position:absolute; left:50%; bottom:24%; transform:translateX(-50%);
-    width:120px; height:70px; z-index:4; opacity:.5;
-  }
-  .temple::before{
-    content:"";
-    position:absolute; bottom:0; left:10px; right:10px; height:40px;
-    background:#1a0805;
-    clip-path:polygon(0 100%,0 30%,50% 0,100% 30%,100% 100%);
-  }
-  .temple::after{
-    content:"";
-    position:absolute; bottom:36px; left:38px; right:38px; height:34px;
-    background:#1a0805;
-    clip-path:polygon(0 100%,0 40%,50% 0,100% 40%,100% 100%);
-  }
+        /* parchment texture overlay */
+        .texture {
+            position: absolute;
+            inset: 0;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(139, 105, 20, 0.03) 3px, rgba(139, 105, 20, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(139, 105, 20, 0.02) 3px, rgba(139, 105, 20, 0.02) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
 
-  /* ---------- pookalam / floral emblem top ---------- */
-  .emblem{
-    position:absolute; top:6.5%; left:50%; transform:translateX(-50%);
-    width:34px; height:34px; z-index:20;
-  }
-  .emblem .petal{
-    position:absolute; top:50%; left:50%;
-    width:16px; height:8px;
-    background:radial-gradient(circle at 30% 50%, var(--gold-light), var(--gold) 60%, var(--gold-dark) 100%);
-    border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
-    transform-origin:0% 50%;
-  }
-  .emblem .petal:nth-child(1){ transform:translate(-50%,-50%) rotate(0deg); }
-  .emblem .petal:nth-child(2){ transform:translate(-50%,-50%) rotate(45deg); }
-  .emblem .petal:nth-child(3){ transform:translate(-50%,-50%) rotate(90deg); }
-  .emblem .petal:nth-child(4){ transform:translate(-50%,-50%) rotate(135deg); }
-  .emblem .petal:nth-child(5){ transform:translate(-50%,-50%) rotate(180deg); }
-  .emblem .petal:nth-child(6){ transform:translate(-50%,-50%) rotate(225deg); }
-  .emblem .petal:nth-child(7){ transform:translate(-50%,-50%) rotate(270deg); }
-  .emblem .petal:nth-child(8){ transform:translate(-50%,-50%) rotate(315deg); }
-  .emblem .center{
-    position:absolute; top:50%; left:50%; width:10px; height:10px;
-    background:radial-gradient(circle at 35% 35%, #fff2c9, var(--gold-dark));
-    border-radius:50%;
-    transform:translate(-50%,-50%);
-    box-shadow:0 0 6px 1px rgba(255,200,90,.8);
-  }
+        /* ========== FOLIAGE TOP LEFT ========== */
+        .foliage-left {
+            position: absolute;
+            top: -10px;
+            left: -20px;
+            width: 200px;
+            height: 220px;
+            z-index: 5;
+        }
 
-  .kicker{
-    position:absolute; top:2.2%; left:50%; transform:translateX(-50%);
-    font-size:9px; letter-spacing:6px; color:var(--parchment);
-    opacity:.55; text-transform:uppercase; z-index:20; white-space:nowrap;
-  }
+        .leaf {
+            position: absolute;
+            width: 55px;
+            height: 28px;
+            background: linear-gradient(135deg, #3d7a2c 0%, #5a9e3a 40%, #2d5a1e 100%);
+            border-radius: 50% 0 50% 50%;
+            transform-origin: right center;
+        }
 
-  /* ---------- ONAM headline ---------- */
-  .headline{
-    position:absolute; top:9.5%; left:0; right:0;
-    text-align:center; z-index:20;
-    font-family:'Arial Black', Arial, sans-serif;
-    font-weight:900;
-    font-size:min(21vw,15vh);
-    line-height:.85;
-    letter-spacing:2px;
-    color:var(--cream);
-    -webkit-text-stroke:1.5px #3a1206;
-    background:linear-gradient(180deg,#fffbea 0%, #f3e2ae 35%, #e0bf78 60%, #b9925a 100%);
-    -webkit-background-clip:text;
-    background-clip:text;
-    -webkit-text-fill-color:transparent;
-    filter:
-      drop-shadow(0 2px 0 #6e3410)
-      drop-shadow(0 6px 10px rgba(0,0,0,.65))
-      drop-shadow(0 0 26px rgba(255,150,50,.35));
-    animation:glow 4s ease-in-out infinite;
-  }
-  .headline::after{
-    /* cracked / distressed texture overlay */
-    content:"ONAM";
-    position:absolute; inset:0;
-    color:transparent;
-    background:
-      repeating-linear-gradient(115deg, rgba(0,0,0,.16) 0 2px, transparent 2px 14px),
-      repeating-linear-gradient(25deg, rgba(0,0,0,.12) 0 1px, transparent 1px 20px);
-    -webkit-background-clip:text;
-    background-clip:text;
-    mix-blend-mode:multiply;
-  }
-  @keyframes glow{
-    0%,100%{ filter:drop-shadow(0 2px 0 #6e3410) drop-shadow(0 6px 10px rgba(0,0,0,.65)) drop-shadow(0 0 26px rgba(255,150,50,.35)); }
-    50%{ filter:drop-shadow(0 2px 0 #6e3410) drop-shadow(0 6px 10px rgba(0,0,0,.65)) drop-shadow(0 0 40px rgba(255,180,80,.6)); }
-  }
+        .leaf::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            width: 70%;
+            height: 1px;
+            background: rgba(20, 50, 10, 0.4);
+        }
 
-  .greeting-line{
-    position:absolute; top:calc(9.5% + 15vh); left:8%;
-    max-width:34%;
-    text-align:center; z-index:20;
-    color:var(--parchment);
-    font-size:11px; line-height:1.6;
-    opacity:.85;
-    font-family:Georgia,serif;
-  }
-  .greeting-line b{ display:block; font-size:12px; color:var(--gold-light); }
+        .leaf.l1 {
+            top: 30px;
+            left: 40px;
+            transform: rotate(-25deg);
+        }
 
-  /* ================= MAVELI FIGURE ================= */
-  .maveli{
-    position:absolute;
-    left:50%; bottom:15%;
-    width:280px; height:340px;
-    transform:translateX(-42%);
-    z-index:30;
-  }
+        .leaf.l2 {
+            top: 50px;
+            left: 70px;
+            transform: rotate(10deg);
+            width: 48px;
+        }
 
-  /* stone pedestal */
-  .pedestal{
-    position:absolute; bottom:0; left:50%; transform:translateX(-50%);
-    width:230px; height:26px;
-    background:linear-gradient(180deg,#4a2010,#1a0704);
-    border-radius:50%/60%;
-    box-shadow:0 10px 25px rgba(0,0,0,.7);
-  }
-  .pedestal::before{
-    content:""; position:absolute; top:-10px; left:14px; right:14px; height:16px;
-    background:linear-gradient(180deg,#6e2f14,#3a150a);
-    border-radius:50%;
-  }
+        .leaf.l3 {
+            top: 20px;
+            left: 90px;
+            transform: rotate(-40deg);
+            width: 42px;
+        }
 
-  /* big chair back / halo glow behind him */
-  .halo{
-    position:absolute; bottom:40px; left:50%; transform:translateX(-50%);
-    width:250px; height:250px;
-    background:radial-gradient(circle, rgba(255,196,110,.55), rgba(255,140,40,0) 70%);
-    z-index:-1;
-  }
+        .leaf.l4 {
+            top: 70px;
+            left: 30px;
+            transform: rotate(35deg);
+        }
 
-  /* seat / chair silhouette */
-  .chair{
-    position:absolute; bottom:22px; left:50%; transform:translateX(-50%);
-    width:150px; height:120px;
-    background:linear-gradient(180deg,#3a1a0c,#1c0904);
-    border-radius:14px 14px 4px 4px;
-    z-index:1;
-    box-shadow:inset 0 0 0 4px rgba(120,70,25,.4);
-  }
+        .leaf.l5 {
+            top: 90px;
+            left: 55px;
+            transform: rotate(-15deg);
+            width: 50px;
+        }
 
-  /* legs, dhoti main drape */
-  .legs{
-    position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
-    width:190px; height:118px;
-    z-index:5;
-  }
-  .legs .drape{
-    position:absolute; bottom:0; left:0; width:100%; height:100%;
-    background:linear-gradient(180deg, var(--white-cloth) 0%, var(--white-cloth) 60%, var(--white-cloth-shadow) 100%);
-    clip-path:polygon(8% 100%, 2% 40%, 20% 8%, 50% 0%, 80% 8%, 98% 40%, 92% 100%, 74% 78%, 50% 92%, 26% 78%);
-    box-shadow:inset 0 -10px 18px rgba(150,120,70,.35), inset 0 8px 10px rgba(255,255,255,.4);
-  }
-  .legs .drape::before{
-    /* gold hem stripes */
-    content:"";
-    position:absolute; left:4%; right:4%; bottom:6%; height:14%;
-    background:repeating-linear-gradient(90deg, var(--gold) 0 10px, var(--gold-dark) 10px 14px);
-    clip-path:polygon(4% 100%,0% 0%,100% 0%,96% 100%);
-    opacity:.95;
-  }
-  .legs .pleats{
-    position:absolute; bottom:0; left:22%; right:22%; top:10%;
-    background:repeating-linear-gradient(90deg, rgba(180,150,100,.25) 0 3px, transparent 3px 14px);
-    clip-path:polygon(8% 100%, 2% 40%, 20% 8%, 50% 0%, 80% 8%, 98% 40%, 92% 100%, 74% 78%, 50% 92%, 26% 78%);
-  }
-  .feet{
-    position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
-    width:170px; height:26px; z-index:6;
-  }
-  .shoe{
-    position:absolute; bottom:0; width:60px; height:20px;
-    background:linear-gradient(180deg,var(--gold-light),var(--gold-dark));
-    border-radius:40% 60% 50% 50%/70% 70% 30% 30%;
-  }
-  .shoe.left{ left:6px; }
-  .shoe.right{ right:6px; }
-  .shoe::after{
-    content:""; position:absolute; right:-8px; top:-10px; width:14px; height:16px;
-    background:inherit; border-radius:50% 50% 50% 0%;
-    transform:rotate(35deg);
-  }
-  .shoe.right::after{ right:auto; left:-8px; transform:rotate(-35deg) scaleX(-1); }
+        .leaf.l6 {
+            top: 45px;
+            left: 20px;
+            transform: rotate(50deg);
+            width: 40px;
+        }
 
-  /* golden waist belt */
-  .belt{
-    position:absolute; bottom:112px; left:50%; transform:translateX(-50%);
-    width:150px; height:22px;
-    background:linear-gradient(180deg,var(--gold-light),var(--gold) 50%,var(--gold-dark));
-    border-radius:50%;
-    z-index:8;
-    box-shadow:0 3px 6px rgba(0,0,0,.4);
-  }
-  .belt::before{
-    content:""; position:absolute; left:50%; top:50%; width:22px; height:22px;
-    transform:translate(-50%,-50%);
-    background:radial-gradient(circle at 35% 35%, #fff3c8, var(--gold-dark));
-    border-radius:50%;
-    box-shadow:0 0 6px rgba(255,210,120,.8);
-  }
+        .leaf.l7 {
+            top: 10px;
+            left: 60px;
+            transform: rotate(-55deg);
+            width: 38px;
+        }
 
-  /* belly / torso */
-  .torso{
-    position:absolute; bottom:116px; left:50%; transform:translateX(-50%);
-    width:172px; height:130px;
-    background:radial-gradient(120% 100% at 35% 25%, var(--skin-light) 0%, var(--skin-base) 55%, var(--skin-shadow) 100%);
-    border-radius:50% 50% 48% 48%/58% 58% 42% 42%;
-    z-index:7;
-    box-shadow:inset -18px -10px 30px rgba(70,30,10,.4), inset 10px 10px 20px rgba(255,220,180,.25);
-  }
-  .torso::before{
-    /* navel shading */
-    content:"";
-    position:absolute; left:50%; top:60%; width:10px; height:14px;
-    background:rgba(80,35,15,.5);
-    border-radius:50%;
-    transform:translate(-50%,-50%);
-    filter:blur(1px);
-  }
-  /* shawl draped over left shoulder */
-  .shawl{
-    position:absolute; bottom:150px; right:22px;
-    width:70px; height:150px;
-    background:linear-gradient(160deg,var(--white-cloth) 0%, var(--white-cloth-shadow) 100%);
-    clip-path:polygon(0 0, 60% 0, 100% 90%, 55% 100%, 20% 70%);
-    z-index:9;
-    box-shadow:inset 0 0 14px rgba(150,120,70,.3);
-  }
-  .shawl::after{
-    content:"";
-    position:absolute; right:6px; top:0; bottom:8%; width:10px;
-    background:repeating-linear-gradient(180deg, var(--gold) 0 8px, var(--gold-dark) 8px 11px);
-    clip-path:polygon(0 0,100% 8%,90% 100%,0 92%);
-  }
+        .leaf.l8 {
+            top: 100px;
+            left: 80px;
+            transform: rotate(20deg);
+            width: 45px;
+        }
 
-  /* necklaces */
-  .neck{
-    position:absolute; bottom:238px; left:50%; transform:translateX(-50%);
-    width:60px; height:26px;
-    background:var(--skin-base);
-    border-radius:0 0 30px 30px/0 0 20px 20px;
-    z-index:9;
-  }
-  .necklace{
-    position:absolute; left:50%; transform:translateX(-50%);
-    border-radius:50%;
-    border-style:solid;
-    z-index:10;
-  }
-  .necklace.n1{ bottom:234px; width:88px; height:36px; border:5px solid var(--gold); border-top:none; clip-path:inset(0 0 40% 0);}
-  .necklace.n2{ bottom:222px; width:104px; height:46px; border:4px solid var(--gold-dark); border-top:none; clip-path:inset(0 0 40% 0);}
-  .necklace.n2::after{
-    content:""; position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
-    width:16px; height:20px; background:radial-gradient(circle at 35% 30%, #fff3c8, var(--gold-dark));
-    border-radius:40% 40% 50% 50%;
-    box-shadow:0 0 6px rgba(255,210,120,.7);
-  }
+        .flower-cluster {
+            position: absolute;
+            top: 15px;
+            left: 25px;
+        }
 
-  /* head */
-  .head{
-    position:absolute; bottom:250px; left:50%; transform:translateX(-50%);
-    width:104px; height:100px;
-    background:radial-gradient(120% 120% at 35% 30%, var(--skin-light) 0%, var(--skin-base) 55%, var(--skin-shadow) 100%);
-    border-radius:50% 50% 46% 46%/55% 55% 45% 45%;
-    z-index:11;
-    box-shadow:inset -14px -6px 20px rgba(70,30,10,.35), inset 8px 8px 16px rgba(255,220,180,.3);
-  }
+        .yellow-flower {
+            position: absolute;
+            width: 14px;
+            height: 22px;
+            background: linear-gradient(180deg, #f5d76e 0%, #e8b923 50%, #c9920a 100%);
+            border-radius: 50% 50% 40% 40%;
+            box-shadow: 0 0 0 1px rgba(180, 120, 0, 0.3);
+        }
 
-  /* ears + earrings */
-  .ear{
-    position:absolute; top:44%; width:16px; height:22px;
-    background:var(--skin-base);
-    border-radius:50%;
-  }
-  .ear.l{ left:-8px; }
-  .ear.r{ right:-8px; }
-  .earring{
-    position:absolute; top:70%; width:10px; height:14px;
-    background:radial-gradient(circle at 35% 30%, #fff3c8, var(--gold-dark));
-    border-radius:50%;
-    box-shadow:0 0 5px rgba(255,210,120,.8);
-  }
-  .earring.l{ left:-2px; }
-  .earring.r{ right:-2px; }
+        .yellow-flower::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 10px;
+            background: #8b6914;
+            border-radius: 2px;
+        }
 
-  /* face features */
-  .face{ position:absolute; inset:0; }
-  .brow{
-    position:absolute; top:36%; width:20px; height:5px;
-    background:#1c1006; border-radius:6px;
-  }
-  .brow.l{ left:16%; transform:rotate(-8deg); }
-  .brow.r{ right:16%; transform:rotate(8deg); }
+        .yf1 {
+            top: 0;
+            left: 10px;
+            transform: rotate(-15deg);
+        }
 
-  .eye{
-    position:absolute; top:42%; width:16px; height:8px;
-    background:linear-gradient(180deg,#3a2210,#1c1006);
-    border-radius:0 0 50% 50%/0 0 90% 90%;
-  }
-  .eye.l{ left:18%; }
-  .eye.r{ right:18%; }
-  .eye::after{
-    content:""; position:absolute; top:-2px; left:2px; right:2px; height:3px;
-    background:#1c1006; border-radius:50%;
-  }
+        .yf2 {
+            top: 8px;
+            left: 28px;
+            transform: rotate(8deg);
+        }
 
-  .cheek{
-    position:absolute; top:52%; width:20px; height:12px;
-    background:radial-gradient(circle, rgba(220,90,50,.35), transparent 70%);
-    border-radius:50%;
-  }
-  .cheek.l{ left:8%; }
-  .cheek.r{ right:8%; }
+        .yf3 {
+            top: 18px;
+            left: 5px;
+            transform: rotate(-30deg);
+        }
 
-  .nose{
-    position:absolute; top:44%; left:50%; transform:translateX(-50%);
-    width:16px; height:20px;
-    background:radial-gradient(circle at 40% 30%, var(--skin-light), var(--skin-shadow));
-    border-radius:40% 40% 60% 60%;
-  }
+        .yf4 {
+            top: 25px;
+            left: 22px;
+            transform: rotate(20deg);
+        }
 
-  .smile{
-    position:absolute; top:60%; left:50%; transform:translateX(-50%);
-    width:46px; height:24px;
-    border-bottom:5px solid #3a1206;
-    border-radius:0 0 50% 50%/0 0 100% 100%;
-  }
-  .teeth{
-    position:absolute; top:64%; left:50%; transform:translateX(-50%);
-    width:30px; height:8px;
-    background:#fff8e8;
-    border-radius:2px 2px 6px 6px;
-  }
+        .yf5 {
+            top: 35px;
+            left: 38px;
+            transform: rotate(-5deg);
+        }
 
-  .mustache{
-    position:absolute; top:56%; left:50%; transform:translateX(-50%);
-    width:76px; height:24px;
-    z-index:12;
-  }
-  .mustache .side{
-    position:absolute; top:0; width:40px; height:20px;
-    background:linear-gradient(180deg,#241408,#000);
-    border-radius:50% 50% 50% 50%/60% 60% 100% 100%;
-  }
-  .mustache .side.l{ left:0; transform-origin:100% 20%; transform:rotate(18deg); border-radius:80% 20% 60% 60%/90% 40% 90% 40%; }
-  .mustache .side.r{ right:0; transform-origin:0% 20%; transform:rotate(-18deg) scaleX(-1); border-radius:80% 20% 60% 60%/90% 40% 90% 40%; }
+        .yf6 {
+            top: 42px;
+            left: 12px;
+            transform: rotate(25deg);
+        }
 
-  .beard-tuft{
-    position:absolute; top:74%; left:50%; transform:translateX(-50%);
-    width:22px; height:16px;
-    background:linear-gradient(180deg,#241408,#000);
-    border-radius:0 0 50% 50%/0 0 90% 90%;
-  }
+        .yf7 {
+            top: 5px;
+            left: 45px;
+            transform: rotate(-40deg);
+        }
 
-  /* crown */
-  .crown{
-    position:absolute; top:-46px; left:50%; transform:translateX(-50%);
-    width:96px; height:52px;
-    z-index:13;
-  }
-  .crown .base{
-    position:absolute; bottom:0; left:0; right:0; height:26px;
-    background:linear-gradient(180deg,var(--gold-light),var(--gold) 55%,var(--gold-dark));
-    border-radius:6px;
-    box-shadow:0 3px 6px rgba(0,0,0,.4), inset 0 2px 3px rgba(255,255,255,.5);
-  }
-  .crown .base::after{
-    content:""; position:absolute; left:6%; right:6%; top:30%; bottom:30%;
-    background:repeating-linear-gradient(90deg, rgba(150,90,20,.5) 0 2px, transparent 2px 10px);
-  }
-  .crown .peak{
-    position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
-    width:34px; height:38px;
-    background:linear-gradient(180deg,var(--gold-light),var(--gold) 60%,var(--gold-dark));
-    clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
-    box-shadow:0 2px 5px rgba(0,0,0,.35);
-  }
-  .crown .side{
-    position:absolute; bottom:18px; width:22px; height:26px;
-    background:linear-gradient(180deg,var(--gold-light),var(--gold) 60%,var(--gold-dark));
-    clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
-  }
-  .crown .side.l{ left:4px; }
-  .crown .side.r{ right:4px; }
-  .crown .jewel{
-    position:absolute; bottom:26px; left:50%; transform:translateX(-50%);
-    width:14px; height:14px;
-    background:radial-gradient(circle at 35% 30%, #ffdde0, #c8283a 70%);
-    border-radius:50%;
-    box-shadow:0 0 8px rgba(255,60,80,.7);
-  }
-  .crown .dot{
-    position:absolute; bottom:8px; width:6px; height:6px;
-    background:radial-gradient(circle at 35% 30%,#fff3c8,var(--gold-dark));
-    border-radius:50%;
-  }
-  .crown .dot.d1{ left:12px; }
-  .crown .dot.d2{ left:30px; }
-  .crown .dot.d3{ right:30px; }
-  .crown .dot.d4{ right:12px; }
+        .yf8 {
+            top: 50px;
+            left: 30px;
+            transform: rotate(12deg);
+        }
 
-  /* ---- right arm holding umbrella ---- */
-  .arm-right{
-    position:absolute; bottom:210px; right:2px;
-    width:36px; height:110px;
-    background:linear-gradient(100deg, var(--skin-light), var(--skin-base) 60%, var(--skin-shadow));
-    border-radius:40% 40% 45% 45%/50% 50% 50% 50%;
-    transform:rotate(-8deg);
-    transform-origin:top center;
-    z-index:6;
-  }
-  .fist{
-    position:absolute; bottom:198px; right:-2px;
-    width:26px; height:26px;
-    background:radial-gradient(circle at 35% 30%, var(--skin-light), var(--skin-shadow));
-    border-radius:50%;
-    z-index:15;
-  }
-  .bangle{
-    position:absolute; bottom:206px; right:-4px;
-    width:30px; height:8px;
-    border:3px solid var(--gold);
-    border-radius:50%;
-    z-index:16;
-  }
+        .yf9 {
+            top: 55px;
+            left: 48px;
+            transform: rotate(-18deg);
+        }
 
-  /* ---- left arm raised, waving ---- */
-  .arm-left{
-    position:absolute; bottom:222px; left:-6px;
-    width:30px; height:80px;
-    background:linear-gradient(260deg, var(--skin-light), var(--skin-base) 60%, var(--skin-shadow));
-    border-radius:50% 50% 40% 40%/60% 60% 40% 40%;
-    transform:rotate(48deg);
-    transform-origin:bottom center;
-    z-index:14;
-    animation:wave 2.4s ease-in-out infinite;
-  }
-  @keyframes wave{
-    0%,100%{ transform:rotate(44deg); }
-    50%{ transform:rotate(58deg); }
-  }
-  .hand-wave{
-    position:absolute; top:-16px; left:50%; transform:translateX(-50%);
-    width:26px; height:30px;
-    background:radial-gradient(circle at 40% 30%, var(--skin-light), var(--skin-shadow));
-    border-radius:50% 50% 40% 40%;
-  }
-  .hand-wave::before,.hand-wave::after{
-    content:""; position:absolute; top:-8px; width:6px; height:14px;
-    background:inherit; border-radius:40%;
-  }
-  .hand-wave::before{ left:2px; transform:rotate(-10deg); }
-  .hand-wave::after{ right:2px; transform:rotate(10deg); }
-  .arm-left-bangle{
-    position:absolute; bottom:60px; left:-8px;
-    width:26px; height:8px;
-    border:3px solid var(--gold);
-    border-radius:50%;
-    z-index:15;
-  }
+        .yf10 {
+            top: 30px;
+            left: 55px;
+            transform: rotate(35deg);
+        }
 
-  /* ---------- umbrella (large, hand-held palm-leaf style) ---------- */
-  .umbrella{
-    position:absolute; bottom:250px; right:-58px;
-    width:230px; height:160px;
-    z-index:4;
-    transform-origin:bottom center;
-    animation:umbrella-sway 6s ease-in-out infinite;
-  }
-  @keyframes umbrella-sway{
-    0%,100%{ transform:rotate(-2deg); }
-    50%{ transform:rotate(2deg); }
-  }
-  .umbrella .handle{
-    position:absolute; bottom:0; left:50%; transform:translateX(-50%);
-    width:8px; height:200px;
-    background:linear-gradient(90deg,#6b4321,#3a2210 60%,#22140a);
-    border-radius:4px;
-    z-index:1;
-  }
-  .umbrella .canopy{
-    position:absolute; top:0; left:50%; transform:translateX(-50%);
-    width:230px; height:120px;
-    border-radius:50% 50% 0 0/100% 100% 0 0;
-    background:
-      repeating-conic-gradient(from -90deg at 50% 100%,
-        #caa15a 0deg 15deg,
-        #b8874a 15deg 30deg);
-    box-shadow:0 6px 14px rgba(0,0,0,.5), inset 0 -6px 10px rgba(0,0,0,.25);
-    overflow:hidden;
-  }
-  .umbrella .canopy::before{
-    /* rib lines */
-    content:"";
-    position:absolute; inset:0;
-    background:repeating-conic-gradient(from -90deg at 50% 100%,
-      transparent 0 14.6deg, rgba(60,30,10,.55) 14.6deg 15deg);
-  }
-  .umbrella .canopy::after{
-    content:"";
-    position:absolute; left:0; right:0; bottom:0; height:14px;
-    background:repeating-linear-gradient(90deg, var(--gold) 0 10px, var(--gold-dark) 10px 14px);
-    clip-path:polygon(0 100%,2% 0,98% 0,100% 100%);
-  }
-  .umbrella .tip{
-    position:absolute; top:-14px; left:50%; transform:translateX(-50%);
-    width:12px; height:16px;
-    background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold-dark));
-    border-radius:50% 50% 20% 20%;
-  }
+        .yf11 {
+            top: 65px;
+            left: 18px;
+            transform: rotate(-8deg);
+        }
 
-  /* petals falling */
-  .petals{ position:absolute; inset:0; z-index:40; pointer-events:none; }
-  .petal-fall{
-    position:absolute; top:-5%;
-    width:9px; height:9px;
-    background:radial-gradient(circle at 30% 30%, var(--gold-light), var(--gold-dark));
-    border-radius:50% 50% 50% 0;
-    opacity:.85;
-    animation:fall linear infinite;
-  }
-  @keyframes fall{
-    0%{ transform:translateY(0) rotate(0deg); opacity:0; }
-    10%{ opacity:.9; }
-    100%{ transform:translateY(115vh) rotate(340deg); opacity:0; }
-  }
-  .p1{ left:8%;  animation-duration:9s;  animation-delay:0s; }
-  .p2{ left:22%; animation-duration:11s; animation-delay:2s; }
-  .p3{ left:38%; animation-duration:8s;  animation-delay:1s; }
-  .p4{ left:58%; animation-duration:10s; animation-delay:3s; }
-  .p5{ left:74%; animation-duration:9.5s;animation-delay:.5s;}
-  .p6{ left:88%; animation-duration:12s; animation-delay:2.5s;}
-  .p7{ left:48%; animation-duration:7.5s;animation-delay:4s;}
-  .p8{ left:16%; animation-duration:10.5s;animation-delay:5s;}
+        .yf12 {
+            top: 70px;
+            left: 40px;
+            transform: rotate(22deg);
+        }
 
-  /* ---------- bottom greeting block ---------- */
-  .bottom-block{
-    position:absolute; bottom:4%; left:0; right:0;
-    text-align:center; z-index:45;
-  }
-  .happy{
-    font-family:Georgia,'Times New Roman',serif;
-    font-style:italic;
-    font-weight:700;
-    letter-spacing:10px;
-    font-size:15px;
-    color:var(--cream);
-    opacity:.9;
-  }
-  .onaml{
-    font-family:'Brush Script MT','Segoe Script',cursive;
-    font-size:min(15vw,58px);
-    background:linear-gradient(180deg,#fff2c4,var(--gold) 55%,#a06a17);
-    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-    filter:drop-shadow(0 3px 4px rgba(0,0,0,.6));
-    margin-top:-4px;
-  }
-  .tagline{
-    margin-top:6px;
-    font-size:10px; letter-spacing:4px;
-    color:var(--parchment); opacity:.75;
-    text-transform:uppercase;
-  }
-  .tagline .sep{ color:var(--gold); margin:0 6px; }
+        .yf13 {
+            top: 15px;
+            left: 60px;
+            transform: rotate(-25deg);
+        }
 
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration:.001s !important; animation-iteration-count:1 !important; }
-  }
-</style>
+        .yf14 {
+            top: 48px;
+            left: 0px;
+            transform: rotate(40deg);
+        }
+
+        .yf15 {
+            top: 80px;
+            left: 25px;
+            transform: rotate(-12deg);
+        }
+
+
+        /* ========== FESTIVE AMBIENCE & AURA ========== */
+        .festive-glow-center {
+            position: absolute;
+            top: 240px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 215, 64, 0.28) 0%, rgba(255, 179, 0, 0.14) 38%, rgba(245, 124, 0, 0.05) 65%, transparent 75%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            filter: blur(10px);
+        }
+
+        .festive-glow-maveli {
+            position: absolute;
+            bottom: 200px;
+            left: 15px;
+            width: 320px;
+            height: 380px;
+            background: radial-gradient(ellipse at 50% 40%, rgba(255, 230, 130, 0.32) 0%, rgba(255, 193, 7, 0.14) 50%, transparent 75%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            filter: blur(8px);
+        }
+
+        .festive-glow-pookalam {
+            position: absolute;
+            top: 410px;
+            right: 30px;
+            width: 340px;
+            height: 340px;
+            background: radial-gradient(circle, rgba(255, 193, 7, 0.24) 0%, rgba(255, 111, 0, 0.1) 50%, transparent 75%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            filter: blur(12px);
+        }
+
+        .festive-mandala {
+            position: absolute;
+            top: 350px;
+            right: 25px;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            border: 1.5px dashed rgba(184, 134, 11, 0.25);
+            background:
+                repeating-conic-gradient(from 0deg,
+                    transparent 0deg 15deg,
+                    rgba(184, 134, 11, 0.04) 15deg 30deg);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .festive-mandala::before {
+            content: '';
+            position: absolute;
+            inset: 30px;
+            border-radius: 50%;
+            border: 1px solid rgba(184, 134, 11, 0.2);
+            background:
+                repeating-conic-gradient(from 7.5deg,
+                    transparent 0deg 15deg,
+                    rgba(218, 165, 32, 0.05) 15deg 30deg);
+        }
+
+        .festive-mandala::after {
+            content: '';
+            position: absolute;
+            inset: 70px;
+            border-radius: 50%;
+            border: 1.5px dashed rgba(184, 134, 11, 0.22);
+        }
+
+        /* ========== TROPICAL ONAM LEAVES & FOLIAGE ========== */
+        .tropical-leaf-left {
+            position: absolute;
+            top: 260px;
+            left: -20px;
+            width: 140px;
+            height: 300px;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .vazha-leaf-1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80px;
+            height: 250px;
+            background: linear-gradient(135deg, #235818 0%, #3e8824 35%, #62aa35 70%, #2f6e1e 100%);
+            border-radius: 80% 20% 70% 30% / 60% 30% 70% 40%;
+            transform: rotate(-18deg);
+            box-shadow: 2px 6px 15px rgba(0, 0, 0, 0.15);
+            border-left: 2px solid #1a4511;
+        }
+
+        .vazha-leaf-1::after {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 45%;
+            width: 3px;
+            height: 80%;
+            background: #88ce50;
+            border-radius: 2px;
+            transform: rotate(2deg);
+        }
+
+        .vazha-leaf-2 {
+            position: absolute;
+            top: 70px;
+            left: 25px;
+            width: 60px;
+            height: 190px;
+            background: linear-gradient(135deg, #1b4513 0%, #326f1c 45%, #4f9227 80%, #235216 100%);
+            border-radius: 70% 30% 60% 40% / 50% 20% 80% 50%;
+            transform: rotate(-35deg);
+            opacity: 0.92;
+        }
+
+        .tropical-leaf-right {
+            position: absolute;
+            top: 240px;
+            right: -15px;
+            width: 180px;
+            height: 260px;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .vazha-leaf-r1 {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            width: 72px;
+            height: 220px;
+            background: linear-gradient(225deg, #235818 0%, #3e8824 40%, #62aa35 75%, #2f6e1e 100%);
+            border-radius: 20% 80% 30% 70% / 30% 60% 40% 70%;
+            transform: rotate(22deg);
+            box-shadow: -2px 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .vazha-leaf-r1::after {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: 45%;
+            width: 3px;
+            height: 80%;
+            background: #88ce50;
+            border-radius: 2px;
+            transform: rotate(-2deg);
+        }
+
+        .vazha-leaf-r2 {
+            position: absolute;
+            top: 70px;
+            right: 45px;
+            width: 55px;
+            height: 160px;
+            background: linear-gradient(225deg, #183e10 0%, #2d661a 45%, #468523 80%, #1e4713 100%);
+            border-radius: 30% 70% 40% 60% / 20% 50% 50% 80%;
+            transform: rotate(40deg);
+            opacity: 0.88;
+        }
+
+        /* ========== HANGING ONAM TORANAM GARLAND ========== */
+        .festive-toran {
+            position: absolute;
+            top: 228px;
+            left: 45px;
+            right: 45px;
+            height: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            pointer-events: none;
+            z-index: 9;
+            opacity: 0.95;
+        }
+
+        .toran-string {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #b8860b 20%, #ffd700 50%, #b8860b 80%, transparent);
+        }
+
+        .toran-leaf {
+            width: 14px;
+            height: 25px;
+            background: linear-gradient(180deg, #2d6b1e 0%, #48992a 60%, #1e4d15 100%);
+            clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .toran-marigold {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fff176, #f57c00 65%, #d84315 100%);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+            margin-top: -2px;
+        }
+
+        /* ========== FLOATING ONAM PETALS SCATTER ========== */
+        .petal-scatter {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        .p-petal {
+            position: absolute;
+            border-radius: 50% 0 50% 50%;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+        }
+
+        .p-orange {
+            background: radial-gradient(circle at 30% 30%, #ffa726, #f57c00 65%, #d84315 100%);
+        }
+
+        .p-yellow {
+            background: radial-gradient(circle at 35% 35%, #fff176, #fbc02d 60%, #f57f17 100%);
+        }
+
+        .p-white {
+            background: radial-gradient(circle at 35% 35%, #ffffff, #fffde7 60%, #e0d8c0 100%);
+        }
+
+        .p-pink {
+            background: radial-gradient(circle at 35% 35%, #ff80ab, #f06292 60%, #c2185b 100%);
+        }
+
+        .p-green {
+            background: linear-gradient(135deg, #66bb6a, #2e7d32);
+            border-radius: 50% 0 50% 0;
+        }
+
+        .pet1 {
+            top: 270px;
+            right: 280px;
+            width: 15px;
+            height: 10px;
+            transform: rotate(35deg);
+        }
+
+        .pet2 {
+            top: 310px;
+            right: 210px;
+            width: 18px;
+            height: 12px;
+            transform: rotate(-25deg);
+        }
+
+        .pet3 {
+            top: 340px;
+            right: 140px;
+            width: 14px;
+            height: 9px;
+            transform: rotate(55deg);
+        }
+
+        .pet4 {
+            top: 375px;
+            right: 260px;
+            width: 16px;
+            height: 11px;
+            transform: rotate(-45deg);
+        }
+
+        .pet5 {
+            top: 295px;
+            right: 95px;
+            width: 13px;
+            height: 9px;
+            transform: rotate(15deg);
+        }
+
+        .pet6 {
+            top: 405px;
+            right: 360px;
+            width: 17px;
+            height: 12px;
+            transform: rotate(70deg);
+        }
+
+        .pet7 {
+            top: 470px;
+            right: 380px;
+            width: 15px;
+            height: 10px;
+            transform: rotate(-15deg);
+        }
+
+        .pet8 {
+            top: 540px;
+            right: 370px;
+            width: 18px;
+            height: 12px;
+            transform: rotate(40deg);
+        }
+
+        .pet9 {
+            top: 620px;
+            right: 365px;
+            width: 14px;
+            height: 9px;
+            transform: rotate(-60deg);
+        }
+
+        .pet10 {
+            top: 700px;
+            right: 320px;
+            width: 16px;
+            height: 11px;
+            transform: rotate(25deg);
+        }
+
+        .pet11 {
+            top: 360px;
+            left: 240px;
+            width: 15px;
+            height: 10px;
+            transform: rotate(-30deg);
+        }
+
+        .pet12 {
+            top: 430px;
+            left: 265px;
+            width: 14px;
+            height: 9px;
+            transform: rotate(45deg);
+        }
+
+        .pet13 {
+            top: 500px;
+            left: 250px;
+            width: 17px;
+            height: 11px;
+            transform: rotate(-50deg);
+        }
+
+        .pet14 {
+            top: 740px;
+            right: 180px;
+            width: 16px;
+            height: 11px;
+            transform: rotate(65deg);
+        }
+
+        .pet15 {
+            top: 770px;
+            right: 120px;
+            width: 14px;
+            height: 9px;
+            transform: rotate(-20deg);
+        }
+
+        .pet16 {
+            top: 730px;
+            left: 180px;
+            width: 15px;
+            height: 10px;
+            transform: rotate(30deg);
+        }
+
+        .pet17 {
+            top: 760px;
+            left: 230px;
+            width: 18px;
+            height: 12px;
+            transform: rotate(-40deg);
+        }
+
+        /* ========== GROUND LEVEL FRESH BLOSSOMS & BASE LEAF ========== */
+        .maveli-base-leaf {
+            position: absolute;
+            bottom: 145px;
+            left: 50px;
+            width: 190px;
+            height: 55px;
+            background: radial-gradient(ellipse at 45% 45%, #468624 0%, #2d5a15 65%, #183608 100%);
+            border-radius: 40% 60% 50% 50% / 40% 40% 60% 60%;
+            transform: rotate(3deg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+            z-index: 9;
+        }
+
+        .maveli-base-leaf::after {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 10px;
+            width: 170px;
+            height: 2px;
+            background: #6eb532;
+        }
+
+        .ground-blossoms {
+            position: absolute;
+            bottom: 40px;
+            left: 30px;
+            right: 30px;
+            height: 120px;
+            pointer-events: none;
+            z-index: 12;
+        }
+
+        .flower-bud {
+            position: absolute;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+        }
+
+        .gb-orange {
+            background: radial-gradient(circle at 35% 35%, #ffb74d, #f57c00 70%, #bf360c 100%);
+        }
+
+        .gb-yellow {
+            background: radial-gradient(circle at 35% 35%, #fff59d, #fbc02d 70%, #e65100 100%);
+        }
+
+        .gb-white {
+            background: radial-gradient(circle at 35% 35%, #ffffff, #f5f5f5 70%, #d7ccc8 100%);
+        }
+
+        .gb-pink {
+            background: radial-gradient(circle at 35% 35%, #f48fb1, #ec407a 70%, #ad1457 100%);
+        }
+
+        .gb1 {
+            bottom: 35px;
+            left: 35px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .gb2 {
+            bottom: 25px;
+            left: 60px;
+            width: 14px;
+            height: 14px;
+        }
+
+        .gb3 {
+            bottom: 42px;
+            left: 195px;
+            width: 16px;
+            height: 16px;
+        }
+
+        .gb4 {
+            bottom: 28px;
+            left: 220px;
+            width: 13px;
+            height: 13px;
+        }
+
+        .gb5 {
+            bottom: 50px;
+            left: 245px;
+            width: 17px;
+            height: 17px;
+        }
+
+        .gb6 {
+            bottom: 30px;
+            right: 280px;
+            width: 15px;
+            height: 15px;
+        }
+
+        .gb7 {
+            bottom: 45px;
+            right: 250px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .gb8 {
+            bottom: 22px;
+            right: 220px;
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ========== HEADER TEXT ========== */
+        .header-text {
+            position: absolute;
+            top: 55px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .wish-line {
+            font-size: 13px;
+            letter-spacing: 4px;
+            color: #5c4033;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .happy {
+            font-size: 42px;
+            font-weight: 700;
+            color: #2d6b2d;
+            letter-spacing: 8px;
+            margin-top: 8px;
+            text-shadow: 1px 1px 0 #1a4a1a;
+        }
+
+        .onam {
+            font-size: 72px;
+            font-weight: 800;
+            color: #8b5a0a;
+            letter-spacing: 6px;
+            line-height: 1;
+            text-shadow:
+                2px 2px 0 #5c3a05,
+                0 0 20px rgba(200, 150, 40, 0.3);
+            position: relative;
+        }
+
+        .onam::before,
+        .onam::after {
+            content: '❖';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #b8860b;
+        }
+
+        .onam::before {
+            left: -30px;
+        }
+
+        .onam::after {
+            right: -30px;
+        }
+
+        .ornament {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 6px 0 10px;
+        }
+
+        .ornament span {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #b8860b, transparent);
+        }
+
+        .ornament::before,
+        .ornament::after {
+            content: '✦';
+            color: #b8860b;
+            font-size: 10px;
+        }
+
+        .shamsakal {
+            margin-top: 85px;
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: #6b4423;
+            font-weight: 600;
+        }
+
+        .shamsakal::before,
+        .shamsakal::after {
+            content: ' | ';
+            color: #b8860b;
+        }
+
+        /* ========== MAVELI FIGURE ========== */
+        .maveli {
+            position: absolute;
+            bottom: 180px;
+            left: 30px;
+            width: 260px;
+            height: 480px;
+            z-index: 12;
+        }
+
+        /* body torso */
+        .torso {
+            position: absolute;
+            bottom: 140px;
+            left: 50px;
+            width: 160px;
+            height: 200px;
+            background: linear-gradient(180deg, #f5f0e6 0%, #ebe4d4 40%, #e0d8c8 100%);
+            border-radius: 80px 80px 40px 40px;
+            box-shadow:
+                inset -15px 0 25px rgba(0, 0, 0, 0.08),
+                inset 10px 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        /* bare chest / belly */
+        .belly {
+            position: absolute;
+            bottom: 155px;
+            left: 70px;
+            width: 120px;
+            height: 130px;
+            background: linear-gradient(180deg, #f8e8d0 0%, #e8c8a0 50%, #d4a878 100%);
+            border-radius: 60px 60px 50px 50px;
+            box-shadow:
+                inset -8px 0 15px rgba(0, 0, 0, 0.1),
+                inset 5px 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .belly::before {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 30px;
+            background: radial-gradient(ellipse, rgba(0, 0, 0, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        /* dhoti lower */
+        .dhoti {
+            position: absolute;
+            bottom: 20px;
+            left: 40px;
+            width: 180px;
+            height: 160px;
+            background: linear-gradient(180deg, #f8f4ec 0%, #f0e8d8 30%, #e8dcc8 100%);
+            border-radius: 20px 20px 60px 60px;
+            box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .dhoti-fold {
+            position: absolute;
+            bottom: 30px;
+            left: 55px;
+            width: 150px;
+            height: 120px;
+            background: linear-gradient(90deg, transparent 0%, rgba(200, 180, 140, 0.3) 20%, transparent 40%, rgba(200, 180, 140, 0.25) 60%, transparent 80%);
+            border-radius: 10px;
+        }
+
+        .dhoti-border {
+            position: absolute;
+            bottom: 20px;
+            left: 40px;
+            width: 180px;
+            height: 12px;
+            background: linear-gradient(90deg, #c9a227, #e8c84a, #c9a227, #e8c84a, #c9a227);
+            border-radius: 0 0 8px 8px;
+        }
+
+        .dhoti-border-top {
+            position: absolute;
+            bottom: 165px;
+            left: 55px;
+            width: 150px;
+            height: 8px;
+            background: linear-gradient(90deg, #c9a227, #e8c84a, #c9a227);
+            border-radius: 4px;
+        }
+
+        /* gold waist belt */
+        .belt {
+            position: absolute;
+            bottom: 155px;
+            left: 55px;
+            width: 150px;
+            height: 18px;
+            background: linear-gradient(180deg, #e8c84a 0%, #c9a227 40%, #a67c00 100%);
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .belt::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: rgba(255, 255, 200, 0.5);
+            border-radius: 2px;
+        }
+
+        .belt-ornament {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 22px;
+            height: 22px;
+            background: radial-gradient(circle, #ffd700 30%, #c9a227 70%);
+            border-radius: 50%;
+            border: 2px solid #8b6914;
+            box-shadow: 0 0 6px rgba(200, 150, 0, 0.5);
+        }
+
+        /* legs / feet */
+        .leg-l,
+        .leg-r {
+            position: absolute;
+            bottom: 0;
+            width: 45px;
+            height: 35px;
+            background: linear-gradient(180deg, #e8c8a0, #d4a878);
+            border-radius: 10px 10px 20px 20px;
+        }
+
+        .leg-l {
+            left: 70px;
+        }
+
+        .leg-r {
+            left: 145px;
+        }
+
+        .foot {
+            position: absolute;
+            bottom: -8px;
+            width: 55px;
+            height: 18px;
+            background: #d4a878;
+            border-radius: 40% 40% 30% 30%;
+        }
+
+        .leg-l .foot {
+            left: -5px;
+        }
+
+        .leg-r .foot {
+            left: -5px;
+        }
+
+        /* arms */
+        .arm-l {
+            position: absolute;
+            bottom: 220px;
+            left: 25px;
+            width: 55px;
+            height: 130px;
+            background: linear-gradient(180deg, #f0d8b0, #e0c090);
+            border-radius: 30px;
+            transform: rotate(15deg);
+            transform-origin: top center;
+            box-shadow: inset -5px 0 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .arm-l-fore {
+            position: absolute;
+            bottom: -90px;
+            left: -5px;
+            width: 45px;
+            height: 80px;
+            background: linear-gradient(180deg, #e8c8a0, #d4a878);
+            border-radius: 25px;
+            transform: rotate(-90deg);
+            transform-origin: top center;
+            z-index: 9999;
+        }
+
+        .hand-l {
+            position: absolute;
+            bottom: -25px;
+            left: 5px;
+            width: 35px;
+            height: 30px;
+            background: #d4a878;
+            border-radius: 40% 40% 30% 30%;
+        }
+
+        .arm-r {
+            position: absolute;
+            bottom: 230px;
+            right: 32px;
+            width: 50px;
+            height: 110px;
+            background: linear-gradient(180deg, #f0d8b0, #e0c090);
+            border-radius: 28px;
+            transform: rotate(-24deg);
+            transform-origin: top center;
+        }
+
+        .arm-r-fore {
+            position: absolute;
+            bottom: -55px;
+            right: -10px;
+            width: 42px;
+            height: 70px;
+            background: linear-gradient(180deg, #e8c8a0, #d4a878);
+            border-radius: 22px;
+            transform: rotate(50deg);
+            transform-origin: top center;
+        }
+
+        .hand-r {
+            position: absolute;
+            bottom: -15px;
+            right: 0;
+            width: 38px;
+            height: 32px;
+            background: #d4a878;
+            border-radius: 50% 40% 40% 50%;
+            transform: rotate(-20deg);
+        }
+
+        .hand-r::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 8px;
+            width: 12px;
+            height: 18px;
+            background: #d4a878;
+            border-radius: 40%;
+            transform: rotate(-30deg);
+        }
+
+        /* head */
+        .head {
+            position: absolute;
+            top: 55px;
+            left: 75px;
+            width: 110px;
+            height: 115px;
+            background: linear-gradient(180deg, #f5e0c0 0%, #e8c8a0 60%, #d4a878 100%);
+            border-radius: 50% 50% 45% 45%;
+            box-shadow:
+                inset -8px -5px 15px rgba(0, 0, 0, 0.1),
+                inset 5px 5px 12px rgba(255, 255, 255, 0.35);
+            z-index: 5;
+        }
+
+        /* ears */
+        .ear-l,
+        .ear-r {
+            position: absolute;
+            top: 45px;
+            width: 22px;
+            height: 30px;
+            background: #e0b888;
+            border-radius: 50%;
+            z-index: 4;
+        }
+
+        .ear-l {
+            left: -8px;
+        }
+
+        .ear-r {
+            right: -8px;
+        }
+
+        /* face features */
+        .eye-l,
+        .eye-r {
+            position: absolute;
+            top: 42px;
+            width: 14px;
+            height: 10px;
+            background: #2a1a0a;
+            border-radius: 50%;
+        }
+
+        .eye-l {
+            left: 28px;
+        }
+
+        .eye-r {
+            right: 28px;
+        }
+
+        .eye-l::after,
+        .eye-r::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            width: 5px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .brow-l,
+        .brow-r {
+            position: absolute;
+            top: 34px;
+            width: 20px;
+            height: 4px;
+            background: #3a2a1a;
+            border-radius: 2px;
+        }
+
+        .brow-l {
+            left: 24px;
+            transform: rotate(-8deg);
+        }
+
+        .brow-r {
+            right: 24px;
+            transform: rotate(8deg);
+        }
+
+        .nose {
+            position: absolute;
+            top: 52px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 18px;
+            background: linear-gradient(180deg, #d4a070, #c09060);
+            border-radius: 40% 40% 50% 50%;
+        }
+
+        .mustache {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 18px;
+            background: #2a1a0a;
+            border-radius: 0 0 50% 50%;
+            z-index: 6;
+        }
+
+        .mustache::before,
+        .mustache::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            width: 28px;
+            height: 14px;
+            background: #2a1a0a;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .mustache::before {
+            left: -8px;
+            transform: rotate(-25deg);
+        }
+
+        .mustache::after {
+            right: -8px;
+            transform: rotate(25deg);
+        }
+
+        .smile {
+            position: absolute;
+            top: 88px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 36px;
+            height: 14px;
+            border: 3px solid #5a3a2a;
+            border-top: none;
+            border-radius: 0 0 50% 50%;
+            background: transparent;
+        }
+
+        .smile::before {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 6px;
+            background: #c07060;
+            border-radius: 0 0 40% 40%;
+        }
+
+        /* cheeks */
+        .cheek-l,
+        .cheek-r {
+            position: absolute;
+            top: 55px;
+            width: 22px;
+            height: 16px;
+            background: radial-gradient(ellipse, rgba(220, 120, 100, 0.35) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .cheek-l {
+            left: 8px;
+        }
+
+        .cheek-r {
+            right: 8px;
+        }
+
+        /* crown */
+        .crown {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 55px;
+            z-index: 8;
+        }
+
+        .crown-base {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 22px;
+            background: linear-gradient(180deg, #ffd700 0%, #c9a227 50%, #a67c00 100%);
+            border-radius: 4px 4px 2px 2px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .crown-peak {
+            position: absolute;
+            bottom: 18px;
+            width: 28px;
+            height: 35px;
+            background: linear-gradient(180deg, #ffe55a 0%, #c9a227 60%, #8b6914 100%);
+            border-radius: 50% 50% 4px 4px;
+        }
+
+        .cp1 {
+            left: 8px;
+            height: 28px;
+        }
+
+        .cp2 {
+            left: 36px;
+            height: 38px;
+        }
+
+        .cp3 {
+            left: 64px;
+            height: 28px;
+        }
+
+        .crown-jewel {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle at 35% 35%, #ff6b6b, #c0392b 60%, #8b0000);
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(200, 0, 0, 0.5);
+            border: 1px solid #8b0000;
+        }
+
+        .cj1 {
+            top: 8px;
+            left: 14px;
+        }
+
+        .cj2 {
+            top: 2px;
+            left: 44px;
+            width: 14px;
+            height: 14px;
+        }
+
+        .cj3 {
+            top: 8px;
+            left: 74px;
+        }
+
+        .crown-band {
+            position: absolute;
+            bottom: 4px;
+            left: 5%;
+            width: 90%;
+            height: 6px;
+            background: linear-gradient(90deg, #8b6914, #ffd700, #8b6914, #ffd700, #8b6914);
+            border-radius: 2px;
+        }
+
+        /* jewelry - necklaces */
+        .necklace {
+            position: absolute;
+            top: 160px;
+            left: 75px;
+            width: 110px;
+            height: 50px;
+            border: 4px solid #c9a227;
+            border-top: none;
+            border-radius: 0 0 55px 55px;
+            box-shadow: 0 3px 0 #a67c00;
+            z-index: 6;
+        }
+
+        .necklace-2 {
+            position: absolute;
+            top: 170px;
+            left: 82px;
+            width: 96px;
+            height: 40px;
+            border: 3px solid #e8c84a;
+            border-top: none;
+            border-radius: 0 0 48px 48px;
+            z-index: 6;
+        }
+
+        .necklace-3 {
+            position: absolute;
+            top: 180px;
+            left: 90px;
+            width: 80px;
+            height: 30px;
+            border: 2px solid #ffd700;
+            border-top: none;
+            border-radius: 0 0 40px 40px;
+            z-index: 6;
+        }
+
+        .pendant {
+            position: absolute;
+            top: 205px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 22px;
+            background: radial-gradient(circle at 40% 30%, #ffd700, #c9a227);
+            border-radius: 50% 50% 40% 40%;
+            border: 2px solid #8b6914;
+            z-index: 7;
+        }
+
+        .pendant::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: #c0392b;
+            border-radius: 50%;
+        }
+
+        /* armlets */
+        .armlet {
+            position: absolute;
+            width: 28px;
+            height: 10px;
+            background: linear-gradient(180deg, #ffd700, #c9a227);
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            z-index: 7;
+        }
+
+        .armlet-l {
+            top: 275px;
+            left: 55px;
+            transform: rotate(-68deg);
+        }
+
+        .armlet-r {
+            top: 260px;
+            right: 15px;
+            transform: rotate(24deg);
+        }
+
+        /* umbrella (olakkuda) */
+        .umbrella {
+            position: absolute;
+            top: 30px;
+            left: -30px;
+            width: 160px;
+            height: 200px;
+            z-index: 3;
+        }
+
+        .umbrella-canopy {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 150px;
+            height: 90px;
+            background:
+                radial-gradient(ellipse at 50% 80%, #5c3a1a 0%, transparent 60%),
+                linear-gradient(180deg, #8b5a2b 0%, #6b4220 40%, #4a2c12 100%);
+            border-radius: 50% 50% 45% 45%;
+            box-shadow:
+                inset 0 -20px 30px rgba(0, 0, 0, 0.3),
+                0 8px 20px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .umbrella-canopy::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 10%;
+            width: 80%;
+            height: 40px;
+            background: repeating-linear-gradient(90deg,
+                    transparent,
+                    transparent 12px,
+                    rgba(0, 0, 0, 0.15) 12px,
+                    rgba(0, 0, 0, 0.15) 14px);
+            border-radius: 50%;
+        }
+
+        .umbrella-canopy::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 12px;
+            background: #3a2010;
+            border-radius: 50%;
+        }
+
+        .umbrella-ribs {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 2px;
+            height: 55px;
+            background: #3a2010;
+            transform-origin: top center;
+        }
+
+        .ur1 {
+            transform: translateX(-50%) rotate(-35deg);
+        }
+
+        .ur2 {
+            transform: translateX(-50%) rotate(-15deg);
+        }
+
+        .ur3 {
+            transform: translateX(-50%) rotate(15deg);
+        }
+
+        .ur4 {
+            transform: translateX(-50%) rotate(35deg);
+        }
+
+        .umbrella-pole {
+            position: absolute;
+            top: 85px;
+            left: 72px;
+            width: 8px;
+            height: 200px;
+            background: linear-gradient(90deg, #5c3a1a, #8b5a2b, #5c3a1a);
+            border-radius: 4px;
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .umbrella-handle {
+            position: absolute;
+            bottom: -10px;
+            left: 68px;
+            width: 16px;
+            height: 25px;
+            background: linear-gradient(180deg, #8b5a2b, #4a2c12);
+            border-radius: 0 0 8px 8px;
+        }
+
+
+        /* ========== FOREGROUND SAND ========== */
+        .sand {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 220px;
+            background:
+                linear-gradient(180deg,
+                    transparent 0%,
+                    rgba(230, 210, 170, 0.4) 15%,
+                    #e8d4a8 40%,
+                    #dcc890 70%,
+                    #d0bc80 100%);
+            z-index: 8;
+        }
+
+        /* ========== POOKALAM ========== */
+        .pookalam {
+            position: absolute;
+            top: 440px;
+            right: 60px;
+            width: 280px;
+            height: 280px;
+            z-index: 10;
+        }
+
+        .pk-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        .pk1 {
+            width: 270px;
+            height: 270px;
+            background:
+                repeating-conic-gradient(from 0deg,
+                    #f5d76e 0deg 8deg,
+                    #e8a838 8deg 16deg,
+                    #f0c050 16deg 24deg,
+                    #d4a020 24deg 32deg);
+            box-shadow: 0 0 0 4px #c9a227, 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .pk2 {
+            width: 220px;
+            height: 220px;
+            background:
+                repeating-conic-gradient(from 5deg,
+                    #fff8e0 0deg 10deg,
+                    #f5e8c0 10deg 20deg,
+                    #fff0d0 20deg 30deg);
+            box-shadow: inset 0 0 0 3px #e8d48b;
+        }
+
+        .pk3 {
+            width: 170px;
+            height: 170px;
+            background:
+                repeating-conic-gradient(from 0deg,
+                    #f0a030 0deg 12deg,
+                    #e88820 12deg 24deg,
+                    #f8b050 24deg 36deg);
+        }
+
+        .pk4 {
+            width: 120px;
+            height: 120px;
+            background:
+                repeating-conic-gradient(from 8deg,
+                    #fff 0deg 15deg,
+                    #f8f0e0 15deg 30deg);
+            box-shadow: inset 0 0 0 2px #e8d0a0;
+        }
+
+        .pk5 {
+            width: 70px;
+            height: 70px;
+            background:
+                radial-gradient(circle, #ff6b9d 0%, #e84a7a 40%, #c03060 100%);
+            box-shadow: 0 0 0 3px #ff8fb0;
+        }
+
+        .pk-center {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #ffd700, #c9a227);
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(200, 150, 0, 0.6);
+        }
+
+        /* lotus flowers on pookalam */
+        .lotus {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+        }
+
+        .lotus-petal {
+            position: absolute;
+            width: 12px;
+            height: 18px;
+            background: linear-gradient(180deg, #ff8fb8 0%, #e84a7a 100%);
+            border-radius: 50% 50% 40% 40%;
+            top: 50%;
+            left: 50%;
+            transform-origin: center bottom;
+        }
+
+        .lotus-petal:nth-child(1) {
+            transform: translate(-50%, -90%) rotate(0deg);
+        }
+
+        .lotus-petal:nth-child(2) {
+            transform: translate(-50%, -90%) rotate(60deg);
+        }
+
+        .lotus-petal:nth-child(3) {
+            transform: translate(-50%, -90%) rotate(120deg);
+        }
+
+        .lotus-petal:nth-child(4) {
+            transform: translate(-50%, -90%) rotate(180deg);
+        }
+
+        .lotus-petal:nth-child(5) {
+            transform: translate(-50%, -90%) rotate(240deg);
+        }
+
+        .lotus-petal:nth-child(6) {
+            transform: translate(-50%, -90%) rotate(300deg);
+        }
+
+        .lotus-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            border-radius: 50%;
+        }
+
+        .lt1 {
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .lt2 {
+            top: 55px;
+            left: 55px;
+        }
+
+        .lt3 {
+            top: 55px;
+            right: 55px;
+        }
+
+        .lt4 {
+            bottom: 55px;
+            left: 55px;
+        }
+
+        .lt5 {
+            bottom: 55px;
+            right: 55px;
+        }
+
+        .lt6 {
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .lt7 {
+            top: 50%;
+            left: 25px;
+            transform: translateY(-50%);
+        }
+
+        .lt8 {
+            top: 50%;
+            right: 25px;
+            transform: translateY(-50%);
+        }
+
+        /* flower dots around rings */
+        .flower-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #f5d76e;
+        }
+
+        .fd-yellow {
+            background: radial-gradient(circle at 30% 30%, #ffe55a, #e8b020);
+        }
+
+        .fd-orange {
+            background: radial-gradient(circle at 30% 30%, #ffb040, #e07010);
+        }
+
+        .fd-white {
+            background: radial-gradient(circle at 30% 30%, #fff, #f0e8d0);
+        }
+
+        .fd-pink {
+            background: radial-gradient(circle at 30% 30%, #ffb0c8, #e06080);
+        }
+
+        /* ===================================================
+           NILAVILAKKU (BRASS OIL LAMP) - BOTTOM RIGHT
+           =================================================== */
+        .nilavilakku-wrap {
+            position: absolute;
+            bottom: 40px;
+            right: 32px;
+            width: 145px;
+            height: 245px;
+            z-index: 22;
+            pointer-events: none;
+        }
+
+        .banana-leaf-plate {
+            position: absolute;
+            bottom: 0;
+            left: -15px;
+            width: 155px;
+            height: 58px;
+            background: radial-gradient(ellipse at 40% 40%, #5b9e28 0%, #3e7317 65%, #274d0e 100%);
+            border-radius: 60% 40% 50% 50% / 60% 60% 40% 40%;
+            transform: rotate(-6deg);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .leaf-rib {
+            position: absolute;
+            top: 27px;
+            left: 10px;
+            width: 135px;
+            height: 2px;
+            background: #75bd39;
+        }
+
+        .leaf-flower-1 {
+            position: absolute;
+            bottom: 8px;
+            left: 12px;
+            width: 23px;
+            height: 23px;
+            background: radial-gradient(circle, #ffee55, #f59e0b);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .leaf-flower-2 {
+            position: absolute;
+            bottom: 15px;
+            left: 38px;
+            width: 19px;
+            height: 19px;
+            background: radial-gradient(circle, #ffffff, #e2e8f0);
+            border-radius: 50%;
+        }
+
+        .leaf-flower-3 {
+            position: absolute;
+            bottom: 4px;
+            left: 58px;
+            width: 17px;
+            height: 17px;
+            background: radial-gradient(circle, #ffb300, #d97706);
+            border-radius: 50%;
+        }
+
+        .lamp-base-pedestal {
+            position: absolute;
+            bottom: 12px;
+            left: 44px;
+            width: 68px;
+            height: 35px;
+            background: linear-gradient(to right, #855e12, #d8ab44, #fff09c, #d19f35, #634307);
+            border-radius: 50% 50% 15% 15% / 40% 40% 20% 20%;
+            border: 1.5px solid #442d04;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .lamp-base-ring {
+            position: absolute;
+            bottom: 42px;
+            left: 57px;
+            width: 42px;
+            height: 11px;
+            background: linear-gradient(to right, #9c6f18, #ffd56b, #fff7bd, #b88624);
+            border-radius: 6px;
+        }
+
+        .lamp-stem {
+            position: absolute;
+            bottom: 50px;
+            left: 71px;
+            width: 14px;
+            height: 88px;
+            background: linear-gradient(to right, #6f4a0a 0%, #deb147 40%, #fff2a6 60%, #b5801f 85%, #543606 100%);
+            border-radius: 3px;
+        }
+
+        .lamp-stem-bead {
+            position: absolute;
+            bottom: 88px;
+            left: 65px;
+            width: 26px;
+            height: 17px;
+            background: radial-gradient(ellipse at 40% 40%, #fff09e, #d8ab44 60%, #785009 100%);
+            border-radius: 50%;
+            border: 1px solid #4e3304;
+        }
+
+        .lamp-bowl {
+            position: absolute;
+            bottom: 132px;
+            left: 42px;
+            width: 72px;
+            height: 23px;
+            background: linear-gradient(to right, #754e0b 0%, #deb147 30%, #fff7be 50%, #c99329 80%, #563705 100%);
+            border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+            border: 1.5px solid #462c03;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .lamp-crown-finial {
+            position: absolute;
+            bottom: 148px;
+            left: 70px;
+            width: 16px;
+            height: 31px;
+            background: linear-gradient(to right, #8d6210, #ffd96b, #fff4aa, #a87618);
+            clip-path: polygon(50% 0%, 90% 40%, 75% 100%, 25% 100%, 10% 40%);
+            border: 1px solid #523706;
+        }
+
+        .lamp-flame {
+            position: absolute;
+            width: 8.5px;
+            height: 17px;
+            background: radial-gradient(ellipse at 50% 70%, #ffffff 0%, #fff176 30%, #ff9800 70%, #d84315 100%);
+            border-radius: 50% 50% 35% 35% / 70% 70% 30% 30%;
+            box-shadow: 0 0 10px #ffb300, 0 0 20px #ff6d00, 0 0 35px rgba(255, 179, 0, 0.6);
+            animation: flame-glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes flame-glow {
+            0% {
+                transform: scale(1);
+                opacity: 0.92;
+            }
+
+            100% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
+
+        .flame-1 {
+            bottom: 146px;
+            left: 40px;
+            transform: rotate(-20deg);
+        }
+
+        .flame-2 {
+            bottom: 150px;
+            left: 54px;
+            transform: rotate(-8deg);
+        }
+
+        .flame-3 {
+            bottom: 152px;
+            left: 74px;
+            transform: rotate(0deg);
+        }
+
+        .flame-4 {
+            bottom: 150px;
+            left: 93px;
+            transform: rotate(8deg);
+        }
+
+        .flame-5 {
+            bottom: 146px;
+            left: 107px;
+            transform: rotate(20deg);
+        }
+
+
+        /* ========== FOOTER TEXT ========== */
+        .footer {
+            position: absolute;
+            bottom: 22px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 15;
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: #5c4033;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* subtle animation on maveli */
+        .maveli {
+            animation: gentle-bob 4s ease-in-out infinite;
+        }
+
+        @keyframes gentle-bob {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        /* umbrella slight sway */
+        .umbrella {
+            animation: sway 5s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        @keyframes sway {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(1.5deg);
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <div class="stage">
-    <div class="diamond-pattern"></div>
+    <div class="scene">
+        <div class="texture"></div>
+        <div class="corner-bl"></div>
+        <div class="corner-br"></div>
 
-    <div class="palms">
-      <div class="palm palm1"><div class="trunk"></div><div class="fronds">
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-      </div></div>
-      <div class="palm palm2"><div class="trunk"></div><div class="fronds">
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-      </div></div>
-      <div class="palm palm3"><div class="trunk"></div><div class="fronds">
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-      </div></div>
-      <div class="palm palm4"><div class="trunk"></div><div class="fronds">
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-      </div></div>
-      <div class="palm palm5"><div class="trunk"></div><div class="fronds">
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-      </div></div>
-      <div class="palm palm6"><div class="trunk"></div><div class="fronds">
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-        <div class="frond"></div><div class="frond"></div><div class="frond"></div>
-      </div></div>
-    </div>
+        <!-- Festive Aura & Background Glow -->
+        <div class="festive-glow-center"></div>
+        <div class="festive-glow-maveli"></div>
+        <div class="festive-glow-pookalam"></div>
+        <div class="festive-mandala"></div>
 
-    <div class="temple"></div>
-
-    <div class="kicker">Celebrating our roots</div>
-    <div class="emblem">
-      <div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div>
-      <div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div>
-      <div class="center"></div>
-    </div>
-
-    <div class="headline">ONAM</div>
-    <div class="greeting-line"><b>ഓണാശംസകൾ</b>നിറഞ്ഞ ഓണം<br>നല്ല ഓണം</div>
-
-    <div class="maveli">
-      <div class="halo"></div>
-      <div class="pedestal"></div>
-      <div class="chair"></div>
-
-      <div class="umbrella">
-        <div class="handle"></div>
-        <div class="canopy"></div>
-        <div class="tip"></div>
-      </div>
-
-      <div class="feet">
-        <div class="shoe left"></div>
-        <div class="shoe right"></div>
-      </div>
-      <div class="legs">
-        <div class="drape"></div>
-        <div class="pleats"></div>
-      </div>
-
-      <div class="belt"></div>
-
-      <div class="arm-right"></div>
-      <div class="bangle"></div>
-      <div class="fist"></div>
-
-      <div class="torso"></div>
-      <div class="shawl"></div>
-
-      <div class="neck"></div>
-      <div class="necklace n1"></div>
-      <div class="necklace n2"></div>
-
-      <div class="arm-left">
-        <div class="hand-wave"></div>
-      </div>
-      <div class="arm-left-bangle"></div>
-
-      <div class="head">
-        <div class="ear l"></div><div class="ear r"></div>
-        <div class="earring l"></div><div class="earring r"></div>
-        <div class="face">
-          <div class="brow l"></div><div class="brow r"></div>
-          <div class="eye l"></div><div class="eye r"></div>
-          <div class="cheek l"></div><div class="cheek r"></div>
-          <div class="nose"></div>
-          <div class="mustache">
-            <div class="side l"></div><div class="side r"></div>
-          </div>
-          <div class="smile"></div>
-          <div class="teeth"></div>
-          <div class="beard-tuft"></div>
+        <!-- Tropical Kerala Banana Leaves in empty spaces -->
+        <div class="tropical-leaf-left">
+            <div class="vazha-leaf-1"></div>
+            <div class="vazha-leaf-2"></div>
         </div>
-        <div class="crown">
-          <div class="side l"></div>
-          <div class="side r"></div>
-          <div class="peak"></div>
-          <div class="base"></div>
-          <div class="jewel"></div>
-          <div class="dot d1"></div><div class="dot d2"></div>
-          <div class="dot d3"></div><div class="dot d4"></div>
+        <div class="tropical-leaf-right">
+            <div class="vazha-leaf-r1"></div>
+            <div class="vazha-leaf-r2"></div>
         </div>
-      </div>
-    </div>
 
-    <div class="petals">
-      <div class="petal-fall p1"></div>
-      <div class="petal-fall p2"></div>
-      <div class="petal-fall p3"></div>
-      <div class="petal-fall p4"></div>
-      <div class="petal-fall p5"></div>
-      <div class="petal-fall p6"></div>
-      <div class="petal-fall p7"></div>
-      <div class="petal-fall p8"></div>
-    </div>
+        <!-- Hanging Festive Toranam (Mango Leaves & Marigolds) -->
+        <div class="festive-toran">
+            <div class="toran-string"></div>
+            <div class="toran-leaf"></div>
+            <div class="toran-marigold"></div>
+            <div class="toran-leaf"></div>
+            <div class="toran-marigold"></div>
+            <div class="toran-leaf"></div>
+            <div class="toran-marigold"></div>
+            <div class="toran-leaf"></div>
+            <div class="toran-marigold"></div>
+            <div class="toran-leaf"></div>
+            <div class="toran-marigold"></div>
+            <div class="toran-leaf"></div>
+            <div class="toran-marigold"></div>
+            <div class="toran-leaf"></div>
+            <div class="toran-marigold"></div>
+            <div class="toran-leaf"></div>
+        </div>
 
-    <div class="bottom-block">
-      <div class="happy">HAPPY</div>
-      <div class="onaml">Onam</div>
-      <div class="tagline">TRADITION <span class="sep">&#10070;</span> JOY <span class="sep">&#10070;</span> TOGETHERNESS</div>
-    </div>
+        <!-- Floating Onam Flower Petals Scatter -->
+        <div class="petal-scatter">
+            <div class="p-petal p-orange pet1"></div>
+            <div class="p-petal p-yellow pet2"></div>
+            <div class="p-petal p-white pet3"></div>
+            <div class="p-petal p-pink pet4"></div>
+            <div class="p-petal p-yellow pet5"></div>
+            <div class="p-petal p-orange pet6"></div>
+            <div class="p-petal p-white pet7"></div>
+            <div class="p-petal p-pink pet8"></div>
+            <div class="p-petal p-yellow pet9"></div>
+            <div class="p-petal p-orange pet10"></div>
+            <div class="p-petal p-green pet11"></div>
+            <div class="p-petal p-yellow pet12"></div>
+            <div class="p-petal p-orange pet13"></div>
+            <div class="p-petal p-pink pet14"></div>
+            <div class="p-petal p-white pet15"></div>
+            <div class="p-petal p-yellow pet16"></div>
+            <div class="p-petal p-orange pet17"></div>
+        </div>
 
-    <div class="vignette"></div>
-    <div class="grain"></div>
-  </div>
+        <!-- foliage top left -->
+        <div class="foliage-left">
+            <div class="leaf l1"></div>
+            <div class="leaf l2"></div>
+            <div class="leaf l3"></div>
+            <div class="leaf l4"></div>
+            <div class="leaf l5"></div>
+            <div class="leaf l6"></div>
+            <div class="leaf l7"></div>
+            <div class="leaf l8"></div>
+            <div class="flower-cluster">
+                <div class="yellow-flower yf1"></div>
+                <div class="yellow-flower yf2"></div>
+                <div class="yellow-flower yf3"></div>
+                <div class="yellow-flower yf4"></div>
+                <div class="yellow-flower yf5"></div>
+                <div class="yellow-flower yf6"></div>
+                <div class="yellow-flower yf7"></div>
+                <div class="yellow-flower yf8"></div>
+                <div class="yellow-flower yf9"></div>
+                <div class="yellow-flower yf10"></div>
+                <div class="yellow-flower yf11"></div>
+                <div class="yellow-flower yf12"></div>
+                <div class="yellow-flower yf13"></div>
+                <div class="yellow-flower yf14"></div>
+                <div class="yellow-flower yf15"></div>
+            </div>
+        </div>
+
+
+        <!-- header text -->
+        <div class="header-text">
+            <div class="wish-line">WISHING YOU AND YOUR FAMILY A</div>
+            <div class="happy">HAPPY</div>
+            <div class="onam">ONAM</div>
+            <div class="ornament"><span></span></div>
+            <div class="shamsakal">ONAMASHAMSAKAL</div>
+        </div>
+
+        <!-- Maveli -->
+        <div class="maveli">
+            <!-- umbrella -->
+            <div class="umbrella">
+                <div class="umbrella-canopy">
+                    <div class="umbrella-ribs ur1"></div>
+                    <div class="umbrella-ribs ur2"></div>
+                    <div class="umbrella-ribs ur3"></div>
+                    <div class="umbrella-ribs ur4"></div>
+                </div>
+                <div class="umbrella-pole"></div>
+                <div class="umbrella-handle"></div>
+            </div>
+
+            <!-- body -->
+            <div class="torso"></div>
+            <div class="belly"></div>
+            <div class="dhoti"></div>
+            <div class="dhoti-fold"></div>
+            <div class="dhoti-border"></div>
+            <div class="dhoti-border-top"></div>
+            <div class="belt">
+                <div class="belt-ornament"></div>
+            </div>
+            <div class="leg-l">
+                <div class="foot"></div>
+            </div>
+            <div class="leg-r">
+                <div class="foot"></div>
+            </div>
+
+            <!-- arms -->
+            <div class="arm-l">
+                <div class="arm-l-fore">
+                    <div class="hand-l"></div>
+                </div>
+            </div>
+            <div class="arm-r">
+                <div class="arm-r-fore">
+                    <div class="hand-r"></div>
+                </div>
+            </div>
+
+            <!-- jewelry -->
+            <div class="necklace"></div>
+            <div class="necklace-2"></div>
+            <div class="necklace-3"></div>
+            <div class="pendant"></div>
+            <div class="armlet armlet-l"></div>
+            <div class="armlet armlet-r"></div>
+
+            <!-- head -->
+            <div class="head">
+                <div class="ear-l"></div>
+                <div class="ear-r"></div>
+                <div class="brow-l"></div>
+                <div class="brow-r"></div>
+                <div class="eye-l"></div>
+                <div class="eye-r"></div>
+                <div class="nose"></div>
+                <div class="mustache"></div>
+                <div class="smile"></div>
+                <div class="cheek-l"></div>
+                <div class="cheek-r"></div>
+                <div class="crown">
+                    <div class="crown-peak cp1"></div>
+                    <div class="crown-peak cp2"></div>
+                    <div class="crown-peak cp3"></div>
+                    <div class="crown-base"></div>
+                    <div class="crown-band"></div>
+                    <div class="crown-jewel cj1"></div>
+                    <div class="crown-jewel cj2"></div>
+                    <div class="crown-jewel cj3"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- sand -->
+        <div class="sand"></div>
+
+        <!-- pookalam -->
+        <div class="pookalam">
+            <div class="pk-ring pk1"></div>
+            <div class="pk-ring pk2"></div>
+            <div class="pk-ring pk3"></div>
+            <div class="pk-ring pk4"></div>
+            <div class="pk-ring pk5"></div>
+            <div class="pk-ring pk-center"></div>
+
+            <div class="lotus lt1">
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-center"></div>
+            </div>
+            <div class="lotus lt2">
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-center"></div>
+            </div>
+            <div class="lotus lt3">
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-center"></div>
+            </div>
+            <div class="lotus lt4">
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-center"></div>
+            </div>
+            <div class="lotus lt5">
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-center"></div>
+            </div>
+            <div class="lotus lt6">
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-center"></div>
+            </div>
+            <div class="lotus lt7">
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-center"></div>
+            </div>
+            <div class="lotus lt8">
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-petal"></div>
+                <div class="lotus-center"></div>
+            </div>
+        </div>
+
+        <!-- Nilavilakku (Traditional Brass Oil Lamp) -->
+        <div class="nilavilakku-wrap">
+            <div class="banana-leaf-plate">
+                <div class="leaf-rib"></div>
+                <div class="leaf-flower-1"></div>
+                <div class="leaf-flower-2"></div>
+                <div class="leaf-flower-3"></div>
+            </div>
+
+            <!-- Lamp Pedestal & Stem -->
+            <div class="lamp-base-pedestal"></div>
+            <div class="lamp-base-ring"></div>
+            <div class="lamp-stem"></div>
+            <div class="lamp-stem-bead"></div>
+            <div class="lamp-bowl"></div>
+            <div class="lamp-crown-finial"></div>
+
+            <!-- Glowing Burning Flames -->
+            <div class="lamp-flame flame-1"></div>
+            <div class="lamp-flame flame-2"></div>
+            <div class="lamp-flame flame-3"></div>
+            <div class="lamp-flame flame-4"></div>
+            <div class="lamp-flame flame-5"></div>
+        </div>
+
+        <!-- Banana leaf base under Maveli -->
+        <div class="maveli-base-leaf"></div>
+
+        <!-- Ground level scattered blossoms -->
+        <div class="ground-blossoms">
+            <div class="flower-bud gb-orange gb1"></div>
+            <div class="flower-bud gb-yellow gb2"></div>
+            <div class="flower-bud gb-white gb3"></div>
+            <div class="flower-bud gb-pink gb4"></div>
+            <div class="flower-bud gb-yellow gb5"></div>
+            <div class="flower-bud gb-orange gb6"></div>
+            <div class="flower-bud gb-white gb7"></div>
+            <div class="flower-bud gb-pink gb8"></div>
+        </div>
+
+        <div class="footer">CELEBRATE TRADITION. CHERISH TOGETHERNESS.</div>
+    </div>
 </body>
+
 </html>
